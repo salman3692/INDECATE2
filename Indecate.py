@@ -4,7 +4,7 @@ import dash
 import os
 from flask import Flask
 from dash import html, dcc, Input, Output
-import NG_furnace as ng_fired
+import ng_furnace as ng_fired
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
 file_path = os.getenv('file_path', 'combinations_specific4.csv')
@@ -229,3 +229,5 @@ def update_parallel_coordinates_plot(selected_commodities, cEE_min, cEE_max, cH2
 # Run the app
 if __name__ == '__main__':
     app.run_server(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
