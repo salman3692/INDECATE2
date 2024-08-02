@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\msalman\Desktop\OSMOSE ETs\Python work\Parallel_Glass_V3_2024\venv
+set VIRTUAL_ENV=C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
