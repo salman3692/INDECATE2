@@ -4,7 +4,7 @@ import dash
 import os
 from flask import Flask
 from dash import html, dcc, Input, Output
-import ng_furnace as ng_fired
+# import ng_furnace as ng_fired
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
 file_path = os.getenv('file_path', 'combinations_specific4.csv')
@@ -159,7 +159,7 @@ def description_layout(title, description):
               Input('url', 'pathname'))
 def display_page(pathname):
     if pathname == '/ng-fired':
-        return ng_fired.description_layout()
+        return description_layout("NG Furnace", "NG furnaces use a combination of natural gas and pure oxygen to achieve higher combustion temperatures and improve efficiency. This technology can reduce the volume of flue gas and lower emissions.")
     elif pathname == '/ng-oxyfuel':
         return description_layout("NG-Oxyfuel Furnace", "NG-Oxyfuel furnaces use a combination of natural gas and pure oxygen to achieve higher combustion temperatures and improve efficiency. This technology can reduce the volume of flue gas and lower emissions.")
     elif pathname == '/hybrid':
@@ -228,6 +228,9 @@ def update_parallel_coordinates_plot(selected_commodities, cEE_min, cEE_max, cH2
 
 # Run the app
 if __name__ == '__main__':
-    app.run_server(debug=True)
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    port = int(os.environ.get('PORT', 8050))
+    app.run_server(debug=True, host='0.0.0.0', port=port)
+
+    # app.run_server(debug=True)
+    # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
