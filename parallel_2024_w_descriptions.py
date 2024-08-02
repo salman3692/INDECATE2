@@ -1,12 +1,13 @@
 import pandas as pd
 import plotly.graph_objects as go
 import dash
+import os
 from dash import dcc, html, Input, Output
 import NG_furnace as ng_fired
 # import ng_oxyfuel_description as ng_oxyfuel
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = r"C:\Users\msalman\Desktop\OSMOSE ETs\Python work\Parallel_Glass_V3_2024\combinations_specific4.csv"  # Replace with the actual file path
+file_path = os.getenv('file_path', 'combinations_specific4.csv')
 
 data_df = pd.read_csv(file_path)
 
