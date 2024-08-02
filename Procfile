@@ -1,1 +1,1 @@
-web: python parallel_2024_w_descriptions.py
+web: python Indecate.py
