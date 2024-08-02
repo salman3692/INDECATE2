@@ -2,12 +2,15 @@ import pandas as pd
 import plotly.graph_objects as go
 import dash
 import os
-from dash import dcc, html, Input, Output
+from flask import Flask
+from dash import html, dcc, Input, Output
 import NG_furnace as ng_fired
-# import ng_oxyfuel_description as ng_oxyfuel
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
 file_path = os.getenv('file_path', 'combinations_specific4.csv')
+
+if not os.path.isfile(file_path):
+    raise FileNotFoundError(f"The file {file_path} does not exist.")
 
 data_df = pd.read_csv(file_path)
 
@@ -20,8 +23,9 @@ TRL_mapping = {
 }
 data_df['TRL_num'] = data_df['TRL'].map(TRL_mapping)
 
-# Create a Dash app
-app = dash.Dash(__name__)
+# Create a Flask server and a Dash app
+server = Flask(__name__)
+app = dash.Dash(__name__, server=server)
 app.config.suppress_callback_exceptions = True
 
 # Define the layout of the app

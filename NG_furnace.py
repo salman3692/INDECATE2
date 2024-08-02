@@ -1,5 +1,5 @@
 # ng_fired_description.py
-import dash_html_components as html
+from dash import html, dcc
 
 def description_layout():
     return html.Div([
