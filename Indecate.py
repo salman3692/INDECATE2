@@ -220,7 +220,8 @@ def update_parallel_coordinates_plot(selected_commodities, cEE_min, cEE_max, cH2
                 dict(range=[data_df['cCO2'].min(), data_df['cCO2'].max()], tickvals =[80, 150, 250, 350], label='Cost of Emissions (€/tCO2)', values=filtered_data['cCO2']),
                 dict(range=[data_df['EI'].min(), data_df['EI'].max()], tickvals=data_df['EI'].unique(), label='Emissions Impact: tCO2/tglass', values=filtered_data['EI']),
                 dict(range=[1, 4], tickvals=[1, 2, 3, 4], ticktext=['Low: 3 - 4', 'Medium: 6 - 7', 'High: 8', 'High: 9'], label='TRL', values=filtered_data['TRL_num'])
-            ])
+            ]),
+            unselected = dict(line = dict(color = 'green', opacity = 0.0))
         )
     )
 
