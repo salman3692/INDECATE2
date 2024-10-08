@@ -76,25 +76,27 @@ def main_layout():
                 # Add a label above the checklist
                 html.H3("Select technologies", style={
                     'font-family': 'Segoe UI Semibold',
-                    'text-align': 'center',
+                    'text-align': 'left',
+                    'margin-left': '40px',  # Adjust the left margin as needed
                     'margin-bottom': '5px',  # Add some space between the label and checklist
                     'color': '#003366'  # Optional: customize the color
                 }),
                 # The checklist itself
-                dcc.Checklist(
-                    id='Technology-toggle',
-                    options=[{'label': technology_mapping[val], 'value': val} for val in data_df['Technology'].unique()],
-                    value=data_df['Technology'].unique().tolist(),  # Set default value to show all technologies
-                    inline=True,
-                    style={'font-family': 'Roboto, sans-serif', 'margin': '20px', 'display': 'flex', 'justify-content': 'center'})
-            ], style={'text-align': 'center'}),
+            dcc.Checklist(
+                id='Technology-toggle',
+                options=[{'label': technology_mapping[val], 'value': val} for val in data_df['Technology'].unique()],
+                value=data_df['Technology'].unique().tolist(),  # Set default value to show all technologies
+                inline=True,
+                style={'font-family': 'Roboto, sans-serif', 'margin-left': '40px','margin-top': '20px','margin-bottom': '20px', 'display': 'flex', 'justify-content': 'left'})
+            ], style={'text-align': 'left'}),  # Set the parent div to left-align all child elements
 
             # Input Blocks
             html.Div([
                 # Add a label above the checklist
                 html.H3("Create Scenarios", style={
                     'font-family': 'Segoe UI Semibold',
-                    'text-align': 'center',
+                    'text-align': 'left',
+                    'margin-left': '40px',  # Adjust the left margin as needed
                     'margin-bottom': '5px',  # Add some space between the label and checklist
                     'color': '#003366'  # Optional: customize the color
                 }),
