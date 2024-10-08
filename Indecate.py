@@ -36,8 +36,12 @@ technology_colors = {
     5: 'rgb(128,0,128)'  # H2-fired Furnace (Purple)
 }
 
+external_stylesheets = [
+"https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;600&display=swap"
+]
+
 # Create a Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
 
 # Define the layout of the app
@@ -75,7 +79,7 @@ def main_layout():
             html.Div([
                 # Add a label above the checklist
                 html.H3("Select technologies", style={
-                    'font-family': 'Segoe UI Semibold',
+                    'font-family': 'Familjen Grotesk, sans-serif',
                     'text-align': 'left',
                     'margin-left': '40px',  # Adjust the left margin as needed
                     'margin-bottom': '5px',  # Add some space between the label and checklist
@@ -87,80 +91,80 @@ def main_layout():
                 options=[{'label': technology_mapping[val], 'value': val} for val in data_df['Technology'].unique()],
                 value=data_df['Technology'].unique().tolist(),  # Set default value to show all technologies
                 inline=True,
-                style={'font-family': 'Roboto, sans-serif', 'margin-left': '40px','margin-top': '20px','margin-bottom': '20px', 'display': 'flex', 'justify-content': 'left'})
+                style={'font-family': 'Familjen Grotesk, sans-serif', 'margin-left': '40px','margin-top': '20px','margin-bottom': '20px', 'display': 'flex', 'justify-content': 'left'})
             ], style={'text-align': 'left'}),  # Set the parent div to left-align all child elements
 
             # Input Blocks
             html.Div([
                 # Add a label above the checklist
                 html.H3("Create Scenarios", style={
-                    'font-family': 'Segoe UI Semibold',
+                    'font-family': 'Familjen Grotesk, sans-serif',
                     'text-align': 'left',
                     'margin-left': '40px',  # Adjust the left margin as needed
                     'margin-bottom': '5px',  # Add some space between the label and checklist
                     'color': '#003366'  # Optional: customize the color
                 }),
                 html.Div([
-                    html.Label('Electricity Cost'),
+                    html.Label('Electricity Cost',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cEE-min-input',
                         type='number',
                         value=data_df['cEE'].min(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     ),
                     dcc.Input(
                         id='cEE-max-input',
                         type='number',
                         value=data_df['cEE'].max(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     )
                 ], style={'display': 'inline-block', 'margin': '10px'}),
 
                 html.Div([
-                    html.Label(['H', html.Sub('2'), ' Cost']),
+                    html.Label(['H', html.Sub('2'), ' Cost'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cH2-min-input',
                         type='number',
                         value=data_df['cH2'].min(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     ),
                     dcc.Input(
                         id='cH2-max-input',
                         type='number',
                         value=data_df['cH2'].max(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     )
                 ], style={'display': 'inline-block', 'margin': '10px'}),
 
                 html.Div([
-                    html.Label('NG Cost'),
+                    html.Label('NG Cost',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cNG-min-input',
                         type='number',
                         value=data_df['cNG'].min(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     ),
                     dcc.Input(
                         id='cNG-max-input',
                         type='number',
                         value=data_df['cNG'].max(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     )
                 ], style={'display': 'inline-block', 'margin': '10px'}),
 
                 html.Div([
-                    html.Label(['CO', html.Sub('2'), ' Cost']),
+                    html.Label(['CO', html.Sub('2'), ' Cost'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cCO2-min-input',
                         type='number',
                         value=data_df['cCO2'].min(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     ),
                     dcc.Input(
                         id='cCO2-max-input',
                         type='number',
                         value=data_df['cCO2'].max(),
-                        style={'width': '70px', 'font-family': 'Roboto, sans-serif', 'margin': '0 5px'}
+                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
                     )
                 ], style={'display': 'inline-block', 'margin': '10px'})
             ], style={'text-align': 'center'}),
@@ -172,7 +176,7 @@ def main_layout():
                       style={'width': '100%', 'height': '525px', 'margin': '0px'}),
 
             # Percentage Relative Occurrence
-        html.Div(id='percentage-relative-occurrence', style={'margin': '20px', 'font-family': 'Roboto, sans-serif'})
+        html.Div(id='percentage-relative-occurrence', style={'margin': '20px', 'font-family': 'Familjen Grotesk, sans-serif'})
         ], style={'padding': '20px', 'backgroundColor': '#ffffff'}),
 
         # Footer
@@ -188,8 +192,8 @@ def main_layout():
 def description_layout(title, description):
     return html.Div([
         dcc.Link('Back to main page', href='/'),
-        html.H2(title, style={'font-family': 'Roboto, sans-serif'}),
-        html.P(description, style={'font-family': 'Roboto, sans-serif'})
+        html.H2(title, style={'font-family': 'Familjen Grotesk, sans-serif'}),
+        html.P(description, style={'font-family': 'Familjen Grotesk, sans-serif'})
     ], style={'padding': '20px'})
 
 # Define the callback to update the page content based on the URL
@@ -263,7 +267,7 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
                     ], style={'padding': '10px', 'backgroundColor': '#f8f9fa', 'border-radius': '5px', 'box-shadow': '0 2px 4px rgba(0, 0, 0, 0.1)', 'width': '200px'})
                 ], style={'margin-right': '15px', 'flex-shrink': '0'})
             )
-        
+
         # Prepare the line scatter plot
         scatter_data = [go.Scatter(
             x=[technology_mapping[val] for val in Technology_counts.index],
@@ -292,7 +296,7 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
                 linewidth=2,
                 mirror=True,  # Show the line on both sides of the plot
             ),
-            font=dict(family='Roboto, sans-serif'),
+            font=dict(family='Familjen Grotesk, sans-serif'),
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             showlegend=False,
@@ -306,18 +310,18 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
 
         # Prepare the main output
         percentage_occurrence = html.Div([
-            html.H3("Details", style={'font-family': 'Roboto, sans-serif', 'font-size': '22px', 'font-weight': 'bold', 'color': '#003366'}),
+            html.H3("Details", style={'font-family': 'Familjen Grotesk, sans-serif', 'font-size': '22px', 'font-weight': 'bold', 'color': '#003366'}),
             html.P(f"Total number of solutions in the selected range: {total_count}", style={'font-size': '16px', 'color': '#495057'}),
             html.Br(),
             dcc.Graph(id='technology-occurrence-plot', figure=scatter_fig, style={'width': '100%', 'height': '400px'}),
             html.Br(),
             html.Div(occurrence_info, style={'display': 'flex', 'flex-wrap': 'wrap', 'gap': '15px', 'padding': '10px', 'justify-content': 'center'}),
-        ], style={'margin-bottom': '20px', 'font-family': 'Roboto, sans-serif'})
+        ], style={'margin-bottom': '20px', 'font-family': 'Familjen Grotesk, sans-serif'})
     else:
         percentage_occurrence = html.Div([
-            html.H3("Details", style={'font-family': 'Roboto, sans-serif', 'font-size': '22px', 'font-weight': 'bold', 'color': '#003366'}),
+            html.H3("Details", style={'font-family': 'Familjen Grotesk, sans-serif', 'font-size': '22px', 'font-weight': 'bold', 'color': '#003366'}),
             html.P("No data available for the selected range.", style={'font-size': '16px', 'color': '#6c757d'})
-        ], style={'margin-bottom': '20px', 'font-family': 'Roboto, sans-serif'})
+        ], style={'margin-bottom': '20px', 'font-family': 'Familjen Grotesk, sans-serif'})
 
     # Create the parallel coordinates plot
     fig = go.Figure(data=
@@ -340,7 +344,7 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
 
     fig.update_layout(
         title_font=dict(size=20, color='#003366'),
-        font=dict(family='Roboto, sans-serif', size=13),
+        font=dict(family='Familjen Grotesk, sans-serif', size=13),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         xaxis=dict(tickangle=-45),
