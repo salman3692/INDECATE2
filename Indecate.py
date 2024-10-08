@@ -350,7 +350,6 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
 
     return fig, percentage_occurrence
 
-
 # for deployment
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8050))
