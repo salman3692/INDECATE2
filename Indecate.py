@@ -105,7 +105,7 @@ def main_layout():
                     'color': '#003366'  # Optional: customize the color
                 }),
                 html.Div([
-                    html.Label('Electricity Cost',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+                    html.Label('Electricity Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cEE-min-input',
                         type='number',
@@ -121,7 +121,7 @@ def main_layout():
                 ], style={'display': 'inline-block', 'margin': '10px'}),
 
                 html.Div([
-                    html.Label(['H', html.Sub('2'), ' Cost'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+                    html.Label(['H', html.Sub('2'), ' Cost (€/kWh)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cH2-min-input',
                         type='number',
@@ -137,7 +137,7 @@ def main_layout():
                 ], style={'display': 'inline-block', 'margin': '10px'}),
 
                 html.Div([
-                    html.Label('NG Cost',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+                    html.Label('NG Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cNG-min-input',
                         type='number',
@@ -153,7 +153,7 @@ def main_layout():
                 ], style={'display': 'inline-block', 'margin': '10px'}),
 
                 html.Div([
-                    html.Label(['CO', html.Sub('2'), ' Cost'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+                    html.Label(['CO', html.Sub('2'), ' Cost (€/tCO2)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
                     dcc.Input(
                         id='cCO2-min-input',
                         type='number',
