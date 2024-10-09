@@ -329,10 +329,10 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
         line=dict(
             color=filtered_data['Technology'], colorscale='Blackbody'),
         dimensions=[
-            dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2], label='Cost of Electricity (€/kWh)', values=filtered_data['cEE']),
-            dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2], label='Cost of Hydrogen (€/kWh)', values=filtered_data['cH2']),
+            dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2], label='Cost of Electricity<br>(€/kWh)', values=filtered_data['cEE']),
+            dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2], label='Cost of Hydrogen<br>(€/kWh)', values=filtered_data['cH2']),
             dict(range=[data_df['cNG'].min(), data_df['cNG'].max()], tickvals=[0.01, 0.035, 0.055, 0.075, 0.1], label='Cost of NG<br>(€/kWh)', values=filtered_data['cNG']),
-            dict(range=[0.05,0.3], tickvals =[0.05, 0.1, 0.2, 0.3], label='Cost of Emissions (€/tCO2)', values=filtered_data['cCO2']),
+            dict(range=[0.05,0.3], tickvals =[0.05, 0.1, 0.2, 0.3], label='Cost of Emissions<br>(€/tCO2)', values=filtered_data['cCO2']),
             dict(range=[1, 5], tickvals=[1, 2, 3, 4, 5], ticktext=['NG-fired', 'NG-Oxyfuel', 'Hybrid', 'All-Electric', 'H2-fired'], label='<b>Technology</b>', values=filtered_data['Technology']),
             dict(range=[1, 4], tickvals=[1, 2, 3, 4], ticktext=['Low: 3 - 4', 'Medium: 6 - 7', 'High: 8', 'High: 9'], label='TRL', values=filtered_data['TRL_num']),
             dict(range=[data_df['elec_prod'].min(), data_df['elec_prod'].max()], tickvals=[round(val, 2) for val in data_df['elec_prod'].unique()], label='Electricity Produced<br>(MWe)', values=filtered_data['elec_prod']),
