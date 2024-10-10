@@ -53,127 +53,148 @@ app.layout = html.Div([
 # Create a function to generate the main page layout
 def main_layout():
     return html.Div([
-        # Header
-        # html.Header([
-            # html.H1("Decarbonisation Analysis of Flat Glass Production",
-            #         style={'font-size': '30px', 'font-family': 'Segoe UI Semibold', 'text-align': 'center', 'padding': '20px', 'backgroundColor': '#003366', 'color': '#ffffff'}),
-        #     html.Div([
-        #         html.P([
-        #             html.B("List of Technologies: ", style={'color': '#ffffff'}),
-        #             dcc.Link("NG-fired Furnace", href='/ng-fired', style={'color': '#ffffff'}),
-        #             ", ",
-        #             dcc.Link("NG-Oxyfuel Furnace", href='/ng-oxyfuel', style={'color': '#ffffff'}),
-        #             ", ",
-        #             dcc.Link("Hybrid Furnace (Electric boosting)", href='/hybrid', style={'color': '#ffffff'}),
-        #             ", ",
-        #             dcc.Link("All Electric Furnace", href='/all-electric', style={'color': '#ffffff'}),
-        #             ", ",
-        #             dcc.Link(["H", html.Sub("2"), "-fired Furnace"], href='/h2-fired', style={'color': '#ffffff'})
-        #         ], style={'text-align': 'center'}),
-        #         html.Br(),
-        #         html.I("*Carbon Capture and Heat Recovery is included in all technologies", style={'font-style': 'italic', 'color': '#cccccc'})
-        #     ], style={'margin': '0px', 'text-align': 'center'})
-        # ], style={'backgroundColor': '#003366'}),
 
-            # Technology Toggle Buttons (using dcc.Checklist)
-            html.Div([
-                # Add a label above the checklist
-                html.H3("Select technologies", style={
-                    'font-family': 'Familjen Grotesk, sans-serif',
-                    'text-align': 'left',
-                    'margin-left': '40px',  # Adjust the left margin as needed
-                    'margin-bottom': '5px',  # Add some space between the label and checklist
-                    'color': '#003366'  # Optional: customize the color
-                }),
-                # The checklist itself
-            dcc.Checklist(
-                id='Technology-toggle',
-                options=[{'label': technology_mapping[val], 'value': val} for val in data_df['Technology'].unique()],
-                value=data_df['Technology'].unique().tolist(),  # Set default value to show all technologies
-                inline=True,
-                style={'font-family': 'Familjen Grotesk, sans-serif', 'margin-left': '40px','margin-top': '20px','margin-bottom': '20px', 'display': 'flex', 'justify-content': 'left'})
-            ], style={'text-align': 'left'}),  # Set the parent div to left-align all child elements
+        # Technology Toggle Buttons (using dcc.Checklist)
+        html.Div([
+            # Add a label above the checklist
+            html.H3("Select one or more technologies to compare", style={
+                'font-family': 'Familjen Grotesk, sans-serif',
+                'text-align': 'left',
+                'margin-left': '42px',  # Adjust the left margin as needed
+                'margin-bottom': '5px',  # Add some space between the label and checklist
+                'color': '#003366'  # Optional: customize the color
+            }),
 
-            # Input Blocks
-            html.Div([
-                # Add a label above the checklist
-                html.H3("Create Scenarios", style={
-                    'font-family': 'Familjen Grotesk, sans-serif',
-                    'text-align': 'left',
-                    'margin-left': '40px',  # Adjust the left margin as needed
-                    'margin-bottom': '5px',  # Add some space between the label and checklist
-                    'color': '#003366'  # Optional: customize the color
-                }),
-                html.Div([
-                    html.Label('Electricity Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
-                    dcc.Input(
-                        id='cEE-min-input',
-                        type='number',
-                        value=data_df['cEE'].min(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    ),
-                    dcc.Input(
-                        id='cEE-max-input',
-                        type='number',
-                        value=data_df['cEE'].max(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    )
-                ], style={'display': 'inline-block', 'margin': '10px'}),
+        # The checklist itself
+        dcc.Checklist(
+            id='Technology-toggle',
+            options=[{'label': technology_mapping[val], 'value': val} for val in data_df['Technology'].unique()],
+            value=data_df['Technology'].unique().tolist(),  # Set default value to show all technologies
+            inline=True,
+            style={'font-family': 'Familjen Grotesk, sans-serif', 'margin-left': '38px','margin-top': '20px','margin-bottom': '20px', 'display': 'flex', 'justify-content': 'left'})
+        ], style={'text-align': 'left'}),  # Set the parent div to left-align all child elements
 
-                html.Div([
-                    html.Label(['H', html.Sub('2'), ' Cost (€/kWh)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
-                    dcc.Input(
-                        id='cH2-min-input',
-                        type='number',
-                        value=data_df['cH2'].min(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    ),
-                    dcc.Input(
-                        id='cH2-max-input',
-                        type='number',
-                        value=data_df['cH2'].max(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    )
-                ], style={'display': 'inline-block', 'margin': '10px'}),
+        # Input Blocks
+        html.Div([
+            # Add a label above the checklist
+            html.H3("Select Prices of Energy Sources and Emissions below to create custom Scenarios", style={
+            'font-family': 'Familjen Grotesk, sans-serif',
+            'text-align': 'left',
+            'margin-left': '10px',  # Adjust the left margin as needed
+            'margin-bottom': '5px',  # Add some space between the label and checklist
+            'color': '#003366'  # Optional: customize the color
+        }),
 
-                html.Div([
-                    html.Label('NG Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
-                    dcc.Input(
-                        id='cNG-min-input',
-                        type='number',
-                        value=data_df['cNG'].min(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    ),
-                    dcc.Input(
-                        id='cNG-max-input',
-                        type='number',
-                        value=data_df['cNG'].max(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    )
-                ], style={'display': 'inline-block', 'margin': '10px'}),
+        html.Div([
+            html.Label('Electricity Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            dcc.Input(
+                id='cEE-min-input',
+                type='number',
+                value=data_df['cEE'].min(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            ),
+            dcc.Input(
+                id='cEE-max-input',
+                type='number',
+                value=data_df['cEE'].max(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            )
+        ], style={'display': 'inline-block', 'margin': '10px'}),
 
-                html.Div([
-                    html.Label(['CO', html.Sub('2'), ' Cost (€/tCO2)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
-                    dcc.Input(
-                        id='cCO2-min-input',
-                        type='number',
-                        value=data_df['cCO2'].min(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    ),
-                    dcc.Input(
-                        id='cCO2-max-input',
-                        type='number',
-                        value=data_df['cCO2'].max(),
-                        style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
-                    )
-                ], style={'display': 'inline-block', 'margin': '10px'})
-            ], style={'text-align': 'center'}),
-                    # Content Section
+        html.Div([
+            html.Label(['H', html.Sub('2'), ' Cost (€/kWh)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            dcc.Input(
+                id='cH2-min-input',
+                type='number',
+                value=data_df['cH2'].min(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            ),
+            dcc.Input(
+                id='cH2-max-input',
+                type='number',
+                value=data_df['cH2'].max(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            )
+        ], style={'display': 'inline-block', 'margin': '10px'}),
+
+        html.Div([
+            html.Label('NG Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            dcc.Input(
+                id='cNG-min-input',
+                type='number',
+                value=data_df['cNG'].min(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            ),
+            dcc.Input(
+                id='cNG-max-input',
+                type='number',
+                value=data_df['cNG'].max(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            )
+        ], style={'display': 'inline-block', 'margin': '10px'}),
+
+        html.Div([
+            html.Label(['CO',html.Sub('2'),' Cost (€/tCO',html.Sub('2'),')'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            dcc.Input(
+                id='cCO2-min-input',
+                type='number',
+                value=data_df['cCO2'].min(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            ),
+            dcc.Input(
+                id='cCO2-max-input',
+                type='number',
+                value=data_df['cCO2'].max(),
+                style={'width': '70px', 'font-family': 'Familjen Grotesk, sans-serif', 'margin': '0 5px'}
+            )
+        ], style={'display': 'inline-block', 'margin': '10px'})
+        ], style={'text-align': 'left','margin-left': '30px'}),
+                
+        # Div for both lines
+        html.Div([
+            # First line (left side with arrows and centered text)
+            html.Div(
+                    [
+                        html.Label("Inputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
+                        html.Div(style={
+                            'position': 'relative',
+                            'height': '2px',
+                            'background-color': 'lightgrey',
+                            'width': '750px',  # Adjust the width if necessary
+                            'margin-left': '35px',
+                            'margin-top': '50px',
+                        }, className="arrow-line")
+                    ],
+                    style={'position': 'relative', 'width': '750px'}  # Wrap div to control width and relative position
+                ),
+
+                # Second line (right side with arrows and centered text)
+                html.Div(
+                    [
+                        html.Label("Outputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
+                        html.Div(style={
+                            'position': 'relative',
+                            'height': '2px',
+                            'background-color': 'lightgrey',
+                            'width': '750px',  # Adjust the width if necessary
+                            'margin-right': '65px',
+                            'margin-top': '50px',
+                        }, className="arrow-line")
+                    ],
+                    style={'position': 'relative', 'width': '750px','margin-right': '50px' }  # Wrap div to control width and relative position
+                )
+        ], 
+        style={
+            'display': 'flex',
+            'flex-direction': 'row',  # Make them appear next to each other
+            'justify-content': 'space-between',  # Space them out evenly
+            'margin-bottom': '0px'
+        }),
 
         # Parallel Coordinates Plot
         html.Div([
             dcc.Graph(id='parallel-coordinates-plot',
-                      style={'width': '100%', 'height': '525px', 'margin': '0px'}),
+                    style={'width': '100%', 'height': '525px', 'margin': '0px'}),
 
             # Percentage Relative Occurrence
         html.Div(id='percentage-relative-occurrence', style={'margin': '20px', 'font-family': 'Familjen Grotesk, sans-serif'})
@@ -183,7 +204,7 @@ def main_layout():
         html.Footer([
             html.Div([
                 html.P("©2024 Industrial Decarbonisation Analysis. All rights reserved.",
-                       style={'font-size': '14px', 'color': '#6c757d', 'text-align': 'center', 'padding': '10px'}),
+                    style={'font-size': '14px', 'color': '#6c757d', 'text-align': 'center', 'padding': '10px'}),
             ], style={'backgroundColor': '#003366'})
         ])
     ])
@@ -212,6 +233,15 @@ def display_page(pathname):
         return description_layout("H2-fired Furnace", "H2-fired furnaces use hydrogen as a fuel source, offering a carbon-free alternative to traditional fossil fuels. Hydrogen combustion produces water vapor as the only by-product, making it a promising option for reducing greenhouse gas emissions in the glass industry.")
     else:
         return main_layout()
+
+@app.callback(
+    [Output('line-1', 'style')],
+    [Input('line-1-length-slider', 'value')]
+)
+def update_lines(length_1, length_2, length_3):
+    # Update the width of each line based on the slider value
+    line_1_style = {'height': '10px', 'background-color': 'blue', 'width': f'{length_1}px', 'margin-top': '10px'}
+    return line_1_style
 
 # Define the callback to update the plot and percentage occurrence
 @app.callback(
@@ -332,36 +362,50 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
             dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2], label='Cost of Electricity<br>(€/kWh)', values=filtered_data['cEE']),
             dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2], label='Cost of Hydrogen<br>(€/kWh)', values=filtered_data['cH2']),
             dict(range=[data_df['cNG'].min(), data_df['cNG'].max()], tickvals=[0.01, 0.035, 0.055, 0.075, 0.1], label='Cost of NG<br>(€/kWh)', values=filtered_data['cNG']),
-            dict(range=[0.05,0.3], tickvals =[0.05, 0.1, 0.2, 0.3], label='Cost of Emissions<br>(€/tCO2)', values=filtered_data['cCO2']),
+            dict(range=[0.05,0.3], tickvals =[0.05, 0.1, 0.2, 0.3], label='Cost of Emissions<br>(€/tCO₂)', values=filtered_data['cCO2']),
             dict(range=[1, 5], tickvals=[1, 2, 3, 4, 5], ticktext=['NG-fired', 'NG-Oxyfuel', 'Hybrid', 'All-Electric', 'H2-fired'], label='<b>Technology</b>', values=filtered_data['Technology']),
             dict(range=[1, 4], tickvals=[1, 2, 3, 4], ticktext=['Low: 3 - 4', 'Medium: 6 - 7', 'High: 8', 'High: 9'], label='TRL', values=filtered_data['TRL_num']),
-            dict(range=[data_df['elec_prod'].min(), data_df['elec_prod'].max()], tickvals=[round(val, 2) for val in data_df['elec_prod'].unique()], label='Electricity Produced<br>(MWe)', values=filtered_data['elec_prod']),
-            dict(range=[data_df['EI'].min(), data_df['EI'].max()], tickvals=[round(val, 2) for val in data_df['EI'].unique()], label='Emissions<br>(tCO2/tglass)', values=filtered_data['EI'].round(2))
+            dict(range=[data_df['elec_prod'].min(), data_df['elec_prod'].max()], tickvals=[round(val, 2) for val in data_df['elec_prod'].unique()], label='Electricity Produced<br>(MWₑ)', values=filtered_data['elec_prod']),
+            dict(range=[data_df['EI'].min(), data_df['EI'].max()], tickvals=[round(val, 2) for val in data_df['EI'].unique()], label='Emissions<br>(tCO₂/tglass)', values=filtered_data['EI'].round(2))
         ],
         unselected=dict(line=dict(color='green', opacity=0.0))
     )
     )
 
     fig.update_layout(
+        # annotations=[
+        #     dict(
+        #         x=0.57,  # x-position (relative to the plot area, 0 is far left, 1 is far right)
+        #         y=1.11,  # y-position (relative to the plot area, 0 is bottom, 1 is top)
+        #         text="_________",  # Text to display
+        #         showarrow=False,  # Don't show an arrow
+        #         font=dict(family='Familjen Grotesk, sans-serif', size=15, color="white"),  # Customize font size and color
+        #         xref="paper", yref="paper",  # Use paper coordinates for positioning
+        #         bordercolor="black",  # Border color
+        #         borderwidth=2,  # Border width
+        #         borderpad=4,  # Padding inside the border
+        #         bgcolor="white",  # Background color of the box
+        #         opacity=1  # Set transparency if needed
+        #     )
+        # ],
         title_font=dict(size=20, color='#003366'),
-        font=dict(family='Familjen Grotesk, sans-serif', size=13),
+        font=dict(family='Familjen Grotesk, sans-serif', size=15),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         xaxis=dict(tickangle=-45),
         yaxis=dict(showgrid=False, zeroline=False),
-        margin=dict(l=50, r=30, t=50, b=50),
+        margin=dict(l=50, r=30, t=50, b=50)
     )
-
     return fig, percentage_occurrence
 
-# for deployment
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8050))
-    app.run_server(debug=True, host='0.0.0.0', port=port)
-
-# # Run the app locally
+# # for deployment
 # if __name__ == '__main__':
-#     app.run_server(debug=True)
+#     port = int(os.environ.get('PORT', 8050))
+#     app.run_server(debug=True, host='0.0.0.0', port=port)
+
+# Run the app locally
+if __name__ == '__main__':
+    app.run_server(debug=True)
 
     #     fig = go.Figure(data=
     # go.Parcoords(

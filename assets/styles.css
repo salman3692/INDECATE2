@@ -1,0 +1,42 @@
+/* styles.css */
+
+.arrow-line {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.arrow-line::before,
+.arrow-line::after {
+    content: "";
+    position: absolute;
+    top: 50%; /* Keep arrows vertically centered initially */
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    transform: translateY(-6px); /* Move the arrows 5px upwards */
+}
+
+.arrow-line::before {
+    left: -10px; /* Position the left arrow */
+    border-right: 10px solid lightgrey; /* Left arrow facing right */
+}
+
+.arrow-line::after {
+    right: -10px; /* Position the right arrow */
+    border-left: 10px solid lightgrey; /* Right arrow facing left */
+}
+
+/* Centered text styles for above the line */
+.centered-text {
+    font-family: 'Familjen Grotesk', sans-serif;
+    color: #003366;
+    position: absolute;
+    top: 25px; /* Move the text above the arrow line */
+    text-align: center;
+    width: 100%;  /* Ensure the text takes up the full width of its container */
+    font-size: 16px; /* Adjust text size if needed */
+    transform: translateX(-50%);  /* Center the text horizontally */
+    left: 50%;  /* Position the text at the center */
+}
