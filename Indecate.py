@@ -131,47 +131,6 @@ def main_layout():
             )
         ], style={'display': 'inline-block', 'margin': '10px'})
         ], style={'text-align': 'left','margin-left': '30px'}),
-                
-        # Div for both lines
-        # html.Div([
-        #     # First line (left side with arrows and centered text)
-        #     html.Div(
-        #             [
-        #                 html.Label("Inputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
-        #                 html.Div(style={
-        #                     'position': 'relative',
-        #                     'height': '2px',
-        #                     'background-color': 'lightgrey',
-        #                     'width': '750px',  # Adjust the width if necessary
-        #                     'margin-left': '35px',
-        #                     'margin-top': '50px',
-        #                 }, className="arrow-line")
-        #             ],
-        #             style={'position': 'relative', 'width': '750px'}  # Wrap div to control width and relative position
-        #         ),
-
-        #         # Second line (right side with arrows and centered text)
-        #         html.Div(
-        #             [
-        #                 html.Label("Outputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
-        #                 html.Div(style={
-        #                     'position': 'relative',
-        #                     'height': '2px',
-        #                     'background-color': 'lightgrey',
-        #                     'width': '750px',  # Adjust the width if necessary
-        #                     'margin-right': '65px',
-        #                     'margin-top': '50px',
-        #                 }, className="arrow-line")
-        #             ],
-        #             style={'position': 'relative', 'width': '750px','margin-right': '50px' }  # Wrap div to control width and relative position
-        #         )
-        # ], 
-        # style={
-        #     'display': 'flex',
-        #     'flex-direction': 'row',  # Make them appear next to each other
-        #     'justify-content': 'space-between',  # Space them out evenly
-        #     'margin-bottom': '0px'
-        # }),
 
         # Parallel Coordinates Plot
         html.Div([
@@ -377,3 +336,36 @@ if __name__ == '__main__':
 # # Run the app locally
 # if __name__ == '__main__':
 #     app.run_server(debug=True)
+
+##################################################################
+# extras below:
+# Div for both lines
+# html.Div([
+#     # First line (left side with arrows and centered text)
+#     html.Div([html.Label("Inputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
+#               html.Div(style={'position': 'relative','height': '2px','background-color': 'lightgrey',
+#               'width': '750px','margin-left': '35px','margin-top': '50px',}, className="arrow-line")],
+#               style={'position': 'relative', 'width': '750px'}  # Wrap div to control width and relative position),
+
+#         # Second line (right side with arrows and centered text)
+#         html.Div(
+#             [
+#                 html.Label("Outputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
+#                 html.Div(style={
+#                     'position': 'relative',
+#                     'height': '2px',
+#                     'background-color': 'lightgrey',
+#                     'width': '750px',  # Adjust the width if necessary
+#                     'margin-right': '65px',
+#                     'margin-top': '50px',
+#                 }, className="arrow-line")
+#             ],
+#             style={'position': 'relative', 'width': '750px','margin-right': '50px' }  # Wrap div to control width and relative position
+#         )
+# ], 
+# style={
+#     'display': 'flex',
+#     'flex-direction': 'row',  # Make them appear next to each other
+#     'justify-content': 'space-between',  # Space them out evenly
+#     'margin-bottom': '0px'
+# }),
