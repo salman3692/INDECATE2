@@ -6,7 +6,7 @@ from dash import dcc, html, Input, Output
 import ng_furnace as ng_fired
 
 # Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = os.getenv('file_path', r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Parallel_V6_201224.csv')
+file_path = os.getenv('file_path', r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\Data_file_indecate.csv')
 data_df = pd.read_csv(file_path)
 
 # Mapping dictionary for technology values
@@ -336,7 +336,6 @@ if __name__ == '__main__':
 # # Run the app locally
 # if __name__ == '__main__':
 #     app.run_server(debug=True)
-
 
 
 ##################################################################
