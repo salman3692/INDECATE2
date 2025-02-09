@@ -144,7 +144,7 @@ def main_layout():
         # Footer
         html.Footer([
             html.Div([
-                html.P("©2024 Industrial Decarbonisation Analysis. All rights reserved.",
+                html.P("Disclaimer: Results of INDECATE are based on simulations and data from open literature. For any discrepancies or unusual calculations, please reach out at m.salman@uliege.be to help improve the tool.",
                     style={'font-size': '14px', 'color': '#6c757d', 'text-align': 'center', 'padding': '10px'}),
             ], style={'backgroundColor': '#003366'})
         ])
