@@ -7,7 +7,7 @@ import ng_furnace as ng_fired
 # import ng_oxyfuel_description as ng_oxyfuel
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = os.getenv('file_path', 'combinations_specific4.csv')
+file_path = os.getenv('file_path', 'Data_file_indecate.csv')
 
 data_df = pd.read_csv(file_path)
 

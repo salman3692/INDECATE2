@@ -6,7 +6,7 @@ from dash import dcc, html, Input, Output
 import ng_furnace as ng_fired
 
 # Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = os.getenv('file_path', 'combinations_specific4.csv')
+file_path = os.getenv('file_path', 'Data_file_indecate.csv')
 data_df = pd.read_csv(file_path)
 
 # Map TRL text values to numerical values

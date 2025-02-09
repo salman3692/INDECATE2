@@ -7,7 +7,7 @@ from dash import html, dcc, Input, Output
 # import ng_furnace as ng_fired
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = os.getenv('file_path', 'combinations_specific4.csv')
+file_path = os.getenv('file_path', 'Data_file_indecate.csv')
 
 if not os.path.isfile(file_path):
     raise FileNotFoundError(f"The file {file_path} does not exist.")
