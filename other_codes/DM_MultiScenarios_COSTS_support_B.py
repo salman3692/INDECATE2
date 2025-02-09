@@ -1,75 +1,81 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Load the Excel file
-file_path = r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_V2_031024V2.xlsx'
+file_path = r'c:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_TESTING.xlsx'
+
 xls = pd.ExcelFile(file_path)
 
-# List of scenarios
-scenarios = ['2024', '2030', '2040', '2050']
+# Create a dictionary to store data from each sheet
+data_dict = {}
 
-# List of specific cost variables to extract
-cost_variables = [
-    'NG Furnace Cinv', 'H2 Furnace Cinv', 'EL furnace Cinv', 'NG Oxy Cinv', 'Hyb Cinv',
-    'Flat_glass Cinv', 'ORC Cinv', 'CCS Cinv', 'Boiler Cinv', 'CPU Cinv', 'ASU Cinv',
-    'Elec op', 'H2 op', 'NG op', 'CO2 op'
-]
+# List of sheet names to process
+sheet_names = ['NG', 'NG_CC', 'NGOxy', 'NGOxy_CC', 'Hyb', 'Hyb_CC', 'EL', 'EL_CC', 'H2', 'H2_CC']
 
-# Create a dictionary to store data for each scenario
-scenario_data = {scenario: [] for scenario in scenarios}
+# Loop through each sheet
+for sheet_name in sheet_names:
+    # Check if the sheet exists in the Excel file
+    if sheet_name in xls.sheet_names:
+        try:
+            # Read the sheet into a DataFrame
+            df = pd.read_excel(xls, sheet_name=sheet_name)
+            
+            # Find the row index where "Total Spec Cost (EUR/t)" is located
+            total_spec_cost_row = df[df.iloc[:, 0] == "Total Spec Cost (EUR/t)"].index[0]
+            EI_row = df[df.iloc[:, 0] == "total impact"].index[0]
+            Energy_row = df[df.iloc[:, 0] == "Spec Energy"].index[0]
 
-# Create a list to store the names of sheets that were processed
-processed_sheets = []
+            # Extract data from the row
+            total_spec_cost_2024 = df.iloc[total_spec_cost_row, 1]
+            total_spec_cost_2030 = df.iloc[total_spec_cost_row, 2]
+            total_spec_cost_2040 = df.iloc[total_spec_cost_row, 3]
+            total_spec_cost_2050 = df.iloc[total_spec_cost_row, 4]
+            EI_total = df.iloc[EI_row, 1]
+            Spec_energy = df.iloc[Energy_row, 1]
 
-# Loop through each sheet (technology) in the Excel file
-for sheet_index, sheet_name in enumerate(xls.sheet_names):
-    # Read the sheet into a DataFrame
-    df = pd.read_excel(xls, sheet_name=sheet_name)
+            # Store the data in the dictionary
+            data_dict[sheet_name] = {
+                '2024_Scenario': total_spec_cost_2024, 
+                '2030_Scenario': total_spec_cost_2030, 
+                '2040_Scenario': total_spec_cost_2040, 
+                '2050_Scenario': total_spec_cost_2050,
+                'EI': EI_total / (33333.33 * 8.76),
+                'Spec_Energy': Spec_energy * 3.6
+            }
 
-    # Check if the DataFrame is empty
-    if df.empty:
-        print(f"Skipping empty sheet: '{sheet_name}'")
-        continue
+        except IndexError:
+            # This exception handles cases where the expected row labels are not found
+            print(f"Row labels not found in sheet '{sheet_name}', skipping this sheet.")
+    else:
+        # If the sheet does not exist, skip it
+        print(f"Sheet '{sheet_name}' does not exist, skipping.")
 
-    # Check the actual column names
-    print(f"Column names in '{sheet_name}': {df.columns.tolist()}")
+# Create a new DataFrame from the data dictionary
+summary_df = pd.DataFrame.from_dict(data_dict, orient='index')
 
-    # Determine the correct column name for the 'Lines'
-    line_column_name = df.columns[0]  # Assuming the first column is the one we're looking for
+# Reset the index to turn it into a column
+summary_df.reset_index(inplace=True)
 
-    # Filter the DataFrame to include only the specified cost variables
-    df_filtered = df[df[line_column_name].isin(cost_variables)]
-    
-    # Check if relevant cost variables are found in this sheet
-    if df_filtered.empty:
-        print(f"Skipping sheet '{sheet_name}' as no relevant cost variables found.")
-        continue
+# Rename the first column to "case"
+summary_df.rename(columns={'index': 'Case'}, inplace=True)
 
-    # If it's the first technology, save the cost variable tags
-    if sheet_index == 0:
-        cost_variable_tags = df_filtered[line_column_name].tolist()
-
-    # Track the sheet name that was processed
-    processed_sheets.append(sheet_name)
-
-    # Loop through each scenario (2024, 2030, 2040, 2050)
-    for i, scenario in enumerate(scenarios, start=1):
-        # Extract the values for the scenario
-        scenario_data[scenario].append(df_filtered.iloc[:, i].tolist())
-
-# Create a new Excel writer object
+# Create a new sheet named "SUM" in the Excel file and save the summary data
 with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-    # Loop through each scenario and create a new sheet with combined data
-    for scenario in scenarios:
-        # Create a DataFrame for the scenario with cost variables as rows
-        scenario_df = pd.DataFrame(scenario_data[scenario]).transpose()
-        
-        # Set the column names as the processed technology names (only the ones that were processed)
-        scenario_df.columns = processed_sheets
-        
-        # Insert the cost variable tags in the first column
-        scenario_df.insert(0, 'Cost Variables', cost_variable_tags)
-        
-        # Save the combined DataFrame to a new sheet named after the scenario
-        scenario_df.to_excel(writer, sheet_name=f'{scenario}', index=False)
+    summary_df.to_excel(writer, sheet_name='SUM', index=False)
 
-print("Scenario sheets created successfully.")
+print("Data extraction and summary sheet creation completed.")
+
+
+
+# # Optional: Plotting the data
+# summary_df.plot(kind='bar', rot=0)
+# plt.title('Stacked Column Plot of Summary Data')
+# plt.xlabel('', fontsize=12)
+# plt.ylabel('Total Cost (EUR/t of Glass)')
+# plt.legend()
+# plt.tight_layout()
+# Save the plot as an image (optional)
+# plot_file_path = 'Scenarios2030v2.png'
+# plt.savefig(plot_file_path)
+# print(f"Stacked column plot saved as '{plot_file_path}'")
+# plt.show()

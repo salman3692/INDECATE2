@@ -3,10 +3,9 @@ import plotly.graph_objects as go
 import dash
 import os
 from dash import dcc, html, Input, Output
-import ng_furnace as ng_fired
 
 # Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = os.getenv('file_path', r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Parallel_V6_201224.csv')
+file_path = os.getenv('file_path', r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Parallel_TESTING.csv')
 data_df = pd.read_csv(file_path)
 
 # Mapping dictionary for technology values
@@ -16,6 +15,14 @@ technology_mapping = {
     3: "Hybrid",
     4: "All-Electric",
     5: "H2-fired"
+}
+
+# Mapping dictionary for CC values
+CC_mapping = {
+    1: " ",
+    2: "No",
+    3: "Yes",
+    4: " ",
 }
 
 external_stylesheets = [
@@ -68,7 +75,7 @@ def main_layout():
         }),
 
         html.Div([
-            html.Label('Electricity Cost (€/MWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            html.Label('Electricity Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
             dcc.Input(
                 id='cEE-min-input',
                 type='number',
@@ -84,7 +91,7 @@ def main_layout():
         ], style={'display': 'inline-block', 'margin': '10px'}),
 
         html.Div([
-            html.Label(['H', html.Sub('2'), ' Cost (€/MWh)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            html.Label(['H', html.Sub('2'), ' Cost (€/kWh)'],style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
             dcc.Input(
                 id='cH2-min-input',
                 type='number',
@@ -100,7 +107,7 @@ def main_layout():
         ], style={'display': 'inline-block', 'margin': '10px'}),
 
         html.Div([
-            html.Label('NG Cost (€/MWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
+            html.Label('NG Cost (€/kWh)',style={ 'font-family': 'Familjen Grotesk, sans-serif'}),
             dcc.Input(
                 id='cNG-min-input',
                 type='number',
@@ -133,50 +140,50 @@ def main_layout():
         ], style={'text-align': 'left','margin-left': '30px'}),
                 
         # Div for both lines
-        # html.Div([
-        #     # First line (left side with arrows and centered text)
-        #     html.Div(
-        #             [
-        #                 html.Label("Inputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
-        #                 html.Div(style={
-        #                     'position': 'relative',
-        #                     'height': '2px',
-        #                     'background-color': 'lightgrey',
-        #                     'width': '750px',  # Adjust the width if necessary
-        #                     'margin-left': '35px',
-        #                     'margin-top': '50px',
-        #                 }, className="arrow-line")
-        #             ],
-        #             style={'position': 'relative', 'width': '750px'}  # Wrap div to control width and relative position
-        #         ),
+        html.Div([
+            # First line (left side with arrows and centered text)
+            html.Div(
+                    [
+                        html.Label("Inputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
+                        html.Div(style={
+                            'position': 'relative',
+                            'height': '2px',
+                            'background-color': 'lightgrey',
+                            'width': '750px',  # Adjust the width if necessary
+                            'margin-left': '35px',
+                            'margin-top': '50px',
+                        }, className="arrow-line")
+                    ],
+                    style={'position': 'relative', 'width': '750px'}  # Wrap div to control width and relative position
+                ),
 
-        #         # Second line (right side with arrows and centered text)
-        #         html.Div(
-        #             [
-        #                 html.Label("Outputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
-        #                 html.Div(style={
-        #                     'position': 'relative',
-        #                     'height': '2px',
-        #                     'background-color': 'lightgrey',
-        #                     'width': '750px',  # Adjust the width if necessary
-        #                     'margin-right': '65px',
-        #                     'margin-top': '50px',
-        #                 }, className="arrow-line")
-        #             ],
-        #             style={'position': 'relative', 'width': '750px','margin-right': '50px' }  # Wrap div to control width and relative position
-        #         )
-        # ], 
-        # style={
-        #     'display': 'flex',
-        #     'flex-direction': 'row',  # Make them appear next to each other
-        #     'justify-content': 'space-between',  # Space them out evenly
-        #     'margin-bottom': '0px'
-        # }),
+                # Second line (right side with arrows and centered text)
+                html.Div(
+                    [
+                        html.Label("Outputs", className="centered-text"),  # Apply 'centered-text' class to move the label above the line
+                        html.Div(style={
+                            'position': 'relative',
+                            'height': '2px',
+                            'background-color': 'lightgrey',
+                            'width': '750px',  # Adjust the width if necessary
+                            'margin-right': '65px',
+                            'margin-top': '50px',
+                        }, className="arrow-line")
+                    ],
+                    style={'position': 'relative', 'width': '750px','margin-right': '50px' }  # Wrap div to control width and relative position
+                )
+        ], 
+        style={
+            'display': 'flex',
+            'flex-direction': 'row',  # Make them appear next to each other
+            'justify-content': 'space-between',  # Space them out evenly
+            'margin-bottom': '0px'
+        }),
 
         # Parallel Coordinates Plot
         html.Div([
             dcc.Graph(id='parallel-coordinates-plot',
-                    style={'width': '100%', 'height': '400px', 'margin': '0px'}), #originally 525px for website
+                    style={'width': '100%', 'height': '525px', 'margin': '0px'}), #originally 525px for website
 
             # Percentage Relative Occurrence
         html.Div(id='percentage-relative-occurrence', style={'margin': '20px', 'font-family': 'Familjen Grotesk, sans-serif'})
@@ -204,7 +211,7 @@ def description_layout(title, description):
               Input('url', 'pathname'))
 def display_page(pathname):
     if pathname == '/ng-fired':
-        return ng_fired.description_layout()
+        return description_layout("NG-Oxyfuel Furnace", "NG-Oxyfuel furnaces use a combination of natural gas and pure oxygen to achieve higher combustion temperatures and improve efficiency. This technology can reduce the volume of flue gas and lower emissions.")
     elif pathname == '/ng-oxyfuel':
         return description_layout("NG-Oxyfuel Furnace", "NG-Oxyfuel furnaces use a combination of natural gas and pure oxygen to achieve higher combustion temperatures and improve efficiency. This technology can reduce the volume of flue gas and lower emissions.")
     elif pathname == '/hybrid':
@@ -339,20 +346,17 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
     fig = go.Figure(data=
     go.Parcoords(
         line=dict(
-            color=filtered_data['Technology'], colorscale='blackbody'),
+            color=filtered_data['Technology'], colorscale='viridis'),
         dimensions=[
-            dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[10, 25, 50, 75, 100, 125, 150, 175, 200], label='Electricity<br>(€/MWh)', values=filtered_data['cEE']),
-            dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[10, 25, 50, 75, 100, 150, 200], label='Hydrogen<br>(€/MWh)', values=filtered_data['cH2']),
-            dict(range=[data_df['cNG'].min(), data_df['cNG'].max()], tickvals=[10, 35, 55, 75, 100], label='NG<br>(€/MWh)', values=filtered_data['cNG']),
-            dict(range=[75,250], tickvals =[75, 100, 150, 200, 250], label='Emissions<br>(€/tCO₂)', values=filtered_data['cCO2']),
+            dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2], label='Electricity<br>(€/kWh)', values=filtered_data['cEE']),
+            dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2], label='Hydrogen<br>(€/kWh)', values=filtered_data['cH2']),
+            dict(range=[data_df['cNG'].min(), data_df['cNG'].max()], tickvals=[0.01, 0.035, 0.055, 0.075, 0.1], label='NG<br>(€/kWh)', values=filtered_data['cNG']),
+            dict(range=[0.075,0.25], tickvals =[0.075, 0.1, 0.15, 0.2, 0.25], label='Emissions<br>(€/tCO₂)', values=filtered_data['cCO2']),
             dict(range=[1, 5], tickvals=[1, 2, 3, 4, 5], ticktext=['NG-fired','NG-Oxyfuel','Hybrid','All-Electric','H2-fired'], label='<b>Technology</b>', values=filtered_data['Technology']),
-            # dict(range=[data_df['fuel_demand'].min(), data_df['fuel_demand'].max()], tickvals=[round(val, 2) for val in data_df['fuel_demand'].unique()], label='Fuel Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['fuel_demand']),
-            # dict(range=[data_df['elec_demand'].min(), data_df['elec_demand'].max()], tickvals=[round(val, 2) for val in data_df['elec_demand'].unique()], label='Electricity Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['elec_demand']),
-            dict(range=[1,7], tickvals=[1, 2, 3, 4, 5, 6, 7], label='Fuel Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['fuel_demand']),
-            dict(range=[0,5], tickvals=[0, 1, 2, 3, 4, 5], label='Electricity Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['elec_demand']),
-            dict(range=[1, 4], tickvals=[1, 2, 3, 4], ticktext=[' ','Yes','No',' '], label='Carbon<br>Capture', values=filtered_data['co2_capt']),
-            # dict(range=[data_df['EI'].min(), data_df['EI'].max()], tickvals=[round(val, 2) for val in data_df['EI'].unique()], label='Emissions<br>(t<sub>CO2</sub>/t<sub>glass</sub>)', values=filtered_data['EI'].round(2))
-            dict(range=[0.1,0.7], tickvals=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7], label='Emissions<br>(t<sub>CO2</sub>/t<sub>glass</sub>)', values=filtered_data['EI'].round(2))
+            dict(range=[data_df['fuel_demand'].min(), 6.5], tickvals=[round(val, 2) for val in data_df['fuel_demand'].unique()], label='Fuel Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['fuel_demand']),
+            dict(range=[data_df['elec_demand'].min(), data_df['elec_demand'].max()], tickvals=[round(val, 2) for val in data_df['elec_demand'].unique()], label='Electricity Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['elec_demand']),
+            dict(range=[1, 4], tickvals=[1, 2, 3, 4], ticktext=[' ','Yes','No',' '], label='Carbon Capture', values=filtered_data['co2_capt']),
+            dict(range=[data_df['EI'].min(), data_df['EI'].max()], tickvals=[round(val, 2) for val in data_df['EI'].unique()], label='Emissions<br>(t<sub>CO2</sub>/t<sub>glass</sub>)', values=filtered_data['EI'].round(2))
         ],
         unselected=dict(line=dict(color='green', opacity=0.0))
     )
@@ -369,11 +373,11 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
     )
     return fig, percentage_occurrence
 
-# for deployment
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8050))
-    app.run_server(debug=True, host='0.0.0.0', port=port)
-
-# # Run the app locally
+# # for deployment
 # if __name__ == '__main__':
-#     app.run_server(debug=True)
+#     port = int(os.environ.get('PORT', 8050))
+#     app.run_server(debug=True, host='0.0.0.0', port=port)
+
+# Run the app locally
+if __name__ == '__main__':
+    app.run_server(debug=True)

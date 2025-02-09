@@ -16,9 +16,9 @@ def check_layers_exist(location, file_path):
     prod_capacity = 33333.33  # kg/hr of flat glass
 
     # Patterns to extract production and capture values
-    elec_prod_pattern = re.compile(r'layers_Electricity\s+c1_Glass_ORC_CO2_super_sCO2_supercycle\s+1\s+(-?\d+\.\d+|-?\d+)')
+    elec_demand_pattern = re.compile(r'layers_Electricity\s+c1_world_mergedresource_Resource_Electricity\s+1\s+(-?\d+\.\d+|-?\d+)')
+    EI_pattern = re.compile(r'KPI_impact\s+(=)\s+(-?\d+\.\d+|-?\d+)')
     co2_capt_pattern = re.compile(r'layers_CO2\s+(c1_Glass_CC_Units_CCSPost|c1_Glass_CC_Units_CPU4Oxy)\s+1\s+(-?\d+\.\d+|-?\d+)')
-    EI_pattern = re.compile(r'layers_EnvCO2Em\s+(c1_world_mergedwaste_Environ)\s+1\s+(-?\d+\.\d+|-?\d+)')
 
     # Read the content of the results file
     try:
@@ -49,15 +49,16 @@ def check_layers_exist(location, file_path):
     c8 = 1 if re.search(HR_pattern, content) else 0
 
     # Extract electricity production and CO2 capture values
-    elec_prod_match = re.search(elec_prod_pattern, content)
+    elec_demand_match = re.search(elec_demand_pattern, content)
     co2_capt_match = re.search(co2_capt_pattern, content)
     EI_match = re.search(EI_pattern, content)
 
-    elec_prod = float(elec_prod_match.group(1)) / 1000 if elec_prod_match else 0.0 #in MW
+    elec_demand = float(elec_demand_match.group(1)) / prod_capacity * 3.6 if elec_demand_match else 0.0 #in GJ/t
     co2_capt = float(co2_capt_match.group(2)) / prod_capacity if co2_capt_match else 0.0 #tCO2/tglass
-    EI = float(EI_match.group(2)) * 8.76 / 1000 if EI_match else 0.0 #t/year
+    EI = float(EI_match.group(2)) / (prod_capacity*8.76) if EI_match else 0.0 #t/year
+    # EI = float(EI_match.group(2)) * 8.76 / 1000 if EI_match else 0.0 #t/year
 
-    return c1, c2, c3, c4, c5, c6, c7, c8, elec_prod, co2_capt, EI
+    return c1, c2, c3, c4, c5, c6, c7, c8, elec_demand, co2_capt, EI
 
 # Create a list to store the results for each row
 data = []
@@ -66,8 +67,11 @@ data = []
 trl_mapping = {
     'H2_ORC_CC': 'Low: 3 - 4',
     'H2_ORC': 'Low: 3 - 4',
+    'H2_CC': 'Low: 3 - 4',
     'Elec_ORC_CC': 'Medium: 6 - 7',
+    'Elec': 'Medium: 6 - 7',
     'Elec_ORC': 'Medium: 6 - 7',
+    'Elec_CC': 'Medium: 6 - 7',
     'Hyb_ORC_CC': 'Medium: 6 - 7',
     'Hyb_ORC': 'Medium: 6 - 7',
     'NGOxy_ORC_CC': 'High: 8',
@@ -77,12 +81,12 @@ trl_mapping = {
 }
 
 # Loop through the range from 1 to 749 (inclusive)
-for i in range(1, 1261):
+for i in range(1, 525):
     # Generate the file path for the current file
-    file_path = rf'c:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_059_Parallel_V4\s_{i:03}\opt\hc_0000.txt'
+    file_path = rf'c:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_009_Parallel_V6_C\s_{i:03}\opt\hc_0000.txt'
 
     # Check the layers for the current row (i)
-    c1, c2, c3, c4, c5, c6, c7, c8, elec_prod, co2_capt, EI = check_layers_exist(i, file_path)
+    c1, c2, c3, c4, c5, c6, c7, c8, elec_demand, co2_capt, EI = check_layers_exist(i, file_path)
 
     # Initialize tech and TRL
     tech = ''
@@ -117,10 +121,10 @@ for i in range(1, 1261):
     elif c1 == 0 and c2 == 0 and c3 == 0 and c4 == 1 and c5 == 0:
         if c6 == 0 and c7 == 1 and c8 == 0:
             tech = 'Elec_CC'
-        elif c6 == 0 and c7 == 0 and c8 == 1:
-            tech = 'Elec_ORC'
+        elif c6 == 0 and c7 == 0 and c8 == 0:
+            tech = 'Elec'
         elif c6 == 0 and c7 == 1 and c8 == 1:
-            tech = 'Elec_ORC_CC'
+            tech = 'Elec_ORC'
     # H2 Technology Conditions
     elif c1 == 0 and c2 == 0 and c3 == 0 and c4 == 0 and c5 == 1:
         if c6 == 1 and c7 == 0 and c8 == 0:
@@ -136,10 +140,10 @@ for i in range(1, 1261):
     TRL = trl_mapping.get(tech, '')
 
     # Append the results to the list
-    data.append([tech, elec_prod, co2_capt, EI, TRL])
+    data.append([tech, elec_demand, co2_capt, EI, TRL])
 
 # Specify the path to the existing CSV file
-Output_file = r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Parallel_V4.csv'
+Output_file = r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Parallel_V6_201224_C.csv'
 
 # Check if the output file exists
 if not os.path.exists(Output_file):
@@ -151,15 +155,15 @@ with open(Output_file, 'r', newline='') as csvfile:
     rows = list(reader)
     header = rows[0]  # Extract the header row
 
-    # Ensure 'tech', 'elec_prod', 'co2_capt', 'EI', and 'TRL' columns exist
-    required_columns = ['tech', 'elec_prod', 'co2_capt', 'EI', 'TRL']
+    # Ensure 'tech', 'elec_demand','co2_capt', 'EI', and 'TRL' columns exist
+    required_columns = ['tech', 'elec_demand', 'co2_capt', 'EI', 'TRL']
     for col in required_columns:
         if col not in header:
             header.append(col)
 
     # Get indices for each column
     tech_index = header.index('tech')
-    elec_prod_index = header.index('elec_prod')
+    elec_demand_index = header.index('elec_demand')
     co2_capt_index = header.index('co2_capt')
     EI_index = header.index('EI')
     TRL_index = header.index('TRL')
@@ -180,7 +184,7 @@ with open(Output_file, 'r', newline='') as csvfile:
             row = rows[i]
             row.extend([''] * (len(header) - len(row)))  # Extend row if necessary
             row[tech_index] = data[i-1][0]
-            row[elec_prod_index] = data[i-1][1]
+            row[elec_demand_index] = data[i-1][1]
             row[co2_capt_index] = data[i-1][2]
             row[EI_index] = data[i-1][3]
             row[TRL_index] = data[i-1][4]

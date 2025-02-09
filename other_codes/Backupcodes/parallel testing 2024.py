@@ -4,7 +4,7 @@ import dash
 from dash import dcc, html, Input, Output
 
 # Step 1: Enter your file path to read the data from the CSV file into a Pandas DataFrame
-file_path = r"C:\Users\msalman\Desktop\OSMOSE ETs\Python work\combinations_specific3.csv"  # Replace with the actual file path
+file_path = r"c:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\other_codes\combinations_specific3.csv"  # Replace with the actual file path
 
 data_df = pd.read_csv(file_path)
 
