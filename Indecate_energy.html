@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dynamic Energy Consumption Chart</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;700&display=swap" /> -->
+    <!-- Plotly JS -->
+    <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
+
+    <style>
+      body {
+        background: linear-gradient(135deg, #f6f9fc, #e9eff5);
+        /* Apply the Familjen Grotesk font to the entire page */
+        font-family: 'Familjen Grotesk', sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      h1 {
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      #chart-container {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin: 20px auto;
+        width: 100%;
+        height: 650px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #chart {
+        width: 100%;
+        height: 100%;
+      }
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 26px;
+        display: inline-block;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 26px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: #007bff;
+      }
+      input:checked + .slider:before {
+        transform: translateX(24px);
+      }
+      .toggle-label {
+        margin-left: 10px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- <h1>Energy Consumption by Configuration</h1> -->
+      <div id="chart-container">
+        <div id="chart"></div>
+      </div>
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleCC" onclick="toggleCC()" />
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Toggle Carbon Capture</span>
+      </div>
+    </div>
+
+    <script>
+      // X-axis categories
+      const configurations = ["NGfur", "NGOxyfur", "Hybfur", "ELfur", "H2fur"];
+
+      // Base data: 3 columns (Q-Process, EL-Process, EL-ASU)
+      const baseData = {
+        "NGfur":    [5.34, 0.80, 0],
+        "NGOxyfur": [4.23, 0.80, 0.29],
+        "Hybfur":   [1.92, 2.03, 0.13],
+        "ELfur":    [0,    4.19, 0],
+        "H2fur":    [5.59, 0.80, 0]
+      };
+
+      const processNames = ["Q-Process", "EL-Process", "EL-ASU"];
+      const colors       = ["#1f77b4",   "#ff7f0e",    "#e377c2"];
+
+      // Non-CC vs CC data
+      const heatRecoveredNonCC = [0, 0, 0, 0, 0];
+      const heatRecoveredCC    = [-0.65, 0, 0, 0, -0.51];
+
+      const powerGeneratedNonCC = [-0.22, -0.23, -0.15, 0, -0.23];
+      const powerGeneratedCC    = [0, -0.23, -0.15, 0, 0];
+
+      const emissionsNonCC = [0.61, 0.54, 0.41, 0.36, 0.31];
+      const emissionsCC    = [0.22, 0.14, 0.14, 0.18, 0.15];
+
+      // Extra CC traces
+      const extraQCCS = { 
+        x: configurations, 
+        y: [1.44, 0, 0, 0, 0.51],
+        name: "Q-CCS (CC)",
+        type: "bar",
+        marker: { color: "#2ca02c" }
+      };
+      const extraELCCS = {
+        x: configurations,
+        y: [0.27, 0, 0, 0, 0.09],
+        name: "EL-CCS (CC)",
+        type: "bar",
+        marker: { color: "#9467bd" }
+      };
+      const extraELCPU = {
+        x: configurations,
+        y: [0, 0.51, 0.35, 0.23, 0],
+        name: "EL-CPU (CC)",
+        type: "bar",
+        marker: { color: "#8c564b" }
+      };
+
+      // Toggle state
+      let ccToggled = false;
+
+      // Build base traces for 3 processes
+      function buildBaseTraces(dataObj) {
+        const traces = [];
+        for (let i = 0; i < processNames.length; i++) {
+          traces.push({
+            x: configurations,
+            y: configurations.map((cfg) => dataObj[cfg][i]),
+            name: processNames[i],
+            type: "bar",
+            marker: { color: colors[i] }
+          });
+        }
+        return traces;
+      }
+
+      // Create the base traces
+      const baseTraces = buildBaseTraces(baseData);
+
+      // Additional "Heat Recovered", "Power Generated", and "Emissions" traces
+      let heatRecoveredTrace = {
+        x: configurations,
+        y: heatRecoveredNonCC.slice(),
+        name: "Heat Recovered",
+        type: "bar",
+        marker: { color: "#d62728" }
+      };
+      let powerGeneratedTrace = {
+        x: configurations,
+        y: powerGeneratedNonCC.slice(),
+        name: "Power Generated",
+        type: "bar",
+        marker: { color: "#17becf" }
+      };
+      let emissionsTrace = {
+        x: configurations,
+        y: emissionsNonCC.slice(),
+        mode: "markers",
+        name: "Emissions",
+        type: "scatter",
+        yaxis: "y2",
+        marker: { color: "#000000", size: 10 }
+      };
+
+      // Layout with explicit fixed ranges so toggling doesn’t shift the plot
+      const layout = {
+        font: { family: "Familjen Grotesk, sans-serif" },
+        legend: {
+          font: { family: "Familjen Grotesk, sans-serif", size : 16 },
+          orientation: "h",
+          x: 0.5,
+          xanchor: "center",
+          y: 1.15,
+          yanchor: "bottom"
+        },
+        barmode: "relative",
+        yaxis: {
+          title: { text: "Energy Consumption (GJ/tCO<sub>2</sub>)", font: { family: "Familjen Grotesk, sans-serif", size: 16 }},
+          tickfont: {size: 15},
+          range: [-1, 8.5],
+          autorange: false,
+          showgrid: false,
+          zeroline: true
+        },
+        yaxis2: {
+          title: { text: "Emissions (Direct + Indirect) (t<sub>CO₂</sub>/t<sub>glass</sub>)", font: { family: "Familjen Grotesk, sans-serif", size: 16 }},
+          tickfont: {size: 15},
+          overlaying: "y",
+          side: "right",
+          range: [-0.1, 0.85],
+          autorange: false,
+          showgrid: false,
+          zeroline: true
+        }
+      };
+
+      // Initial data (non-CC)
+      let currentData = [
+        ...baseTraces,
+        heatRecoveredTrace,
+        powerGeneratedTrace,
+        emissionsTrace
+      ];
+
+      // Plot initial chart
+      Plotly.newPlot("chart", currentData, layout, { responsive: true });
+
+      // Toggle CC function
+      function toggleCC() {
+        ccToggled = !ccToggled;
+
+        // Update the main traces to reflect CC or non-CC values
+        heatRecoveredTrace.y = ccToggled ? heatRecoveredCC : heatRecoveredNonCC;
+        powerGeneratedTrace.y = ccToggled ? powerGeneratedCC : powerGeneratedNonCC;
+        emissionsTrace.y     = ccToggled ? emissionsCC    : emissionsNonCC;
+
+        // If CC is toggled ON, add extra CC traces; otherwise remove them
+        if (ccToggled) {
+          currentData = [
+            ...baseTraces,
+            extraQCCS,
+            extraELCCS,
+            extraELCPU,
+            heatRecoveredTrace,
+            powerGeneratedTrace,
+            emissionsTrace
+          ];
+        } else {
+          currentData = [
+            ...baseTraces,
+            heatRecoveredTrace,
+            powerGeneratedTrace,
+            emissionsTrace
+          ];
+        }
+
+        // Redraw using Plotly.react for a smooth transition
+        Plotly.react("chart", currentData, layout);
+      }
+    </script>
+  </body>
+</html>
