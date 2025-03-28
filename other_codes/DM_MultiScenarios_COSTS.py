@@ -76,13 +76,13 @@ patterns_and_descriptions = [
 # sheet_name = 'NG'
 
 # Define input file paths with descriptive variable names
-path_2024 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_005_testing\s_001\opt\hc_0000.txt'
-path_2030 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_005_testing\s_002\opt\hc_0000.txt'
-path_2040 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_005_testing\s_003\opt\hc_0000.txt'
-path_2050 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_005_testing\s_004\opt\hc_0000.txt'
+path_2024 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_015_testing\s_001\opt\hc_0000.txt'
+path_2030 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_015_testing\s_002\opt\hc_0000.txt'
+path_2040 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_015_testing\s_003\opt\hc_0000.txt'
+path_2050 = r'C:\Users\msalman\Desktop\OSMOSE ETs\Glass\results\Glass\run_015_testing\s_004\opt\hc_0000.txt'
 
 # Define output file path
-output_file_path = r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_TESTING.xlsx'
+output_file_path = r'C:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_270225.xlsx'
 
 # Load the existing workbook
 workbook = load_workbook(output_file_path)

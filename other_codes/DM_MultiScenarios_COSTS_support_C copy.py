@@ -1,5 +1,4 @@
 import pandas as pd
-
 Industry = 'Glass'
 plant_capacity = 33333.33 #kg/hr
 plant_capacity_an = plant_capacity * 8.76 #kg/hr
@@ -84,23 +83,20 @@ def calculate_variables(sheet_name, data):
 
         # print(Qel_Furnace)
 
-        Qth_CCS = calculated_vars.get('Scope1_Em', 0) * 9 * 0.83334 * kW_to_GJ_f # 3.0 GJ/tCO2 = 0.8334 kWh/kgCO2
-
-        # # Logic for Qth_WHR based on sheet name
-        # if sheet_name == 'NG_CC':
-        #     Qth_WHR = (calculated_vars.get('Boiler_NG', 0) * kW_to_GJ_f * 0.85 - calculated_vars.get('Scope1_Em', 0) * 9 * 0.83334 * kW_to_GJ_f)  # For 90% capture rate: Boiler energy - (captured emissions * specific energy for capture)
-        # elif sheet_name == 'H2_CC':
-        #     Qth_WHR = (-calculated_vars.get('Scope1_Em', 0) * 9 * 0.83334 * kW_to_GJ_f)  # For 90% capture rate: captured emissions * specific energy for capture
-        # else:
-        #     Qth_WHR = 0  # Default case
+        # Logic for Qth_WHR based on sheet name
+        if sheet_name == 'NG_CC':
+            Qth_WHR = (calculated_vars.get('Boiler_NG', 0) * kW_to_GJ_f * 0.85 - calculated_vars.get('Scope1_Em', 0) * 9 * 0.83334 * kW_to_GJ_f)  # For 90% capture rate: Boiler energy - (captured emissions * specific energy for capture)
+        elif sheet_name == 'H2_CC':
+            Qth_WHR = (-calculated_vars.get('Scope1_Em', 0) * 9 * 0.83334 * kW_to_GJ_f)  # For 90% capture rate: captured emissions * specific energy for capture
+        else:
+            Qth_WHR = 0  # Default case
 
         Qel_CCS = calculated_vars.get('CCS_EL', 0)*kW_to_GJ_f
         Qth_boiler = calculated_vars.get('Boiler_NG', 0)*kW_to_GJ_f
-        Qth_WHR = - Qth_CCS + Qth_boiler
         Qel_CPU = calculated_vars.get('CPU_EL', 0)*kW_to_GJ_f
         Qel_ASU = calculated_vars.get('ASU_EL', 0)*kW_to_GJ_f
         Qel_WHR = - calculated_vars.get('Elec_supply', 0)*kW_to_GJ_f
-        # Qth_CCS = Qth_boiler - Qth_WHR
+        Qth_CCS = Qth_boiler - Qth_WHR
         EI = calculated_vars.get('EI', 0)/plant_capacity_an
 
         return {

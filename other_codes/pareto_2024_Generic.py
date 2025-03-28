@@ -10,7 +10,7 @@ Product = 'Glass'
 scenario = 1  # Change this value to select the scenario
 
 # Define Excel file and sheet name
-excel_file_path = r'c:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_TESTING.xlsx'
+excel_file_path = r'c:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_270225.xlsx'
 sheet_name = 'SUM'
 
 # Read data from the Excel file
