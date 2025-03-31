@@ -1,2 +1,2 @@
 [build.environment]
-  PYTHON_VERSION = "none"  # Skip Python installation if it's not required
+  PYTHON_VERSION = "3.9.10"  # Or any other stable version like "3.8.10"
