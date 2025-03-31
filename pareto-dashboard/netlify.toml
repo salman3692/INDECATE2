@@ -1,2 +1,2 @@
 [build.environment]
-  PYTHON_VERSION = "3.10.12"  # Or any other stable version like "3.8.10"
+  PYTHON_VERSION = "3.8"  # Or any other stable version like "3.8.10"
