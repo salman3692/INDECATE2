@@ -1,0 +1,2 @@
+[build.environment]
+  PYTHON_VERSION = "none"  # Skip Python installation if it's not required
