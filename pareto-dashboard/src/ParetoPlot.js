@@ -155,14 +155,14 @@ const ParetoPlot = () => {
 
     const defs = svg.select("defs").empty() ? svg.append("defs") : svg.select("defs");
     const gradient = defs.select("#color-gradient").empty()
-      ? defs.append("linearGradient").attr("id", "color-gradient").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%")
+      ? defs.append("linearGradient").attr("id", "color-gradient").attr("x1", "0%").attr("y1", "100%").attr("x2", "0%").attr("y2", "0%")
       : defs.select("#color-gradient");
 
     gradient.selectAll("stop").data(d3.range(101)).join("stop")
       .attr("offset", d => `${d}%`)
       .attr("stop-color", d => d3.interpolateTurbo(d / 100));
 
-    const legendX = width - margin.right + 20;
+    const legendX = width - margin.right + 40;
     const legendY = margin.top;
     const legendHeight = height - margin.top - margin.bottom;
     const legendWidth = 15;
@@ -175,16 +175,37 @@ const ParetoPlot = () => {
       .attr("height", legendHeight)
       .style("fill", "url(#color-gradient)");
 
-    svg.selectAll("text.colorlabel").data([0]).join("text")
-      .attr("class", "colorlabel")
-      .attr("x", legendX + legendWidth + 30)
-      .attr("y", legendY + legendHeight / 2)
-      .attr("text-anchor", "middle")
-      .attr("transform", `rotate(-90, ${legendX + legendWidth + 30}, ${legendY + legendHeight / 2})`)
-      .style("font-size", "15px")
+    // Get the min, mid, max of the energy domain
+    const [minEnergy, maxEnergy] = d3.extent(data, d => d.Spec_Energy);
+    const midEnergy = ((minEnergy + maxEnergy) / 2).toFixed(2);
+    // Create a scale for colorbar ticks
+    // const energyScale = d3.scaleLinear()
+    //   .domain([minEnergy, maxEnergy])
+    //   .range([legendY + legendHeight, legendY]);
+
+    const ticks = [
+      { value: minEnergy.toFixed(2), y: legendY + legendHeight },
+      { value: midEnergy, y: legendY + legendHeight / 2 },
+      { value: maxEnergy.toFixed(2), y: legendY }
+    ];
+    // Add colorbar tick labels
+    svg.selectAll("text.energy-tick").data(ticks).join("text")
+      .attr("class", "energy-tick")
+      .attr("x", legendX + legendWidth + 5)
+      .attr("y", d => d.y)
+      .attr("text-anchor", "start")
+      .attr("alignment-baseline", "middle")
+      .style("font-size", "12px")
       .style("font-family", "'Familjen Grotesk', sans-serif")
-      .style("fill", "#333")
-      .text("Specific Energy (GJ/t)");
+      .text(d => d.value);
+
+      svg.selectAll("text.colorbar-label").data([0]).join("text")
+      .attr("class", "colorbar-label")
+      .attr("transform", `translate(${legendX - 10}, ${legendY + legendHeight / 2}) rotate(-90)`)
+      .attr("text-anchor", "middle")
+      .style("font-size", "14px")
+      .style("font-family", "'Familjen Grotesk', sans-serif")
+      .text("Spec Energy (GJ/t)");    
 
     const legendGroup = svg.selectAll("g.legend-group").data([0]).join("g")
       .attr("class", "legend-group")
