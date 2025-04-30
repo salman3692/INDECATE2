@@ -94,8 +94,8 @@ const ParetoPlot = () => {
       .style("font-family", "'Familjen Grotesk', sans-serif")
       .text("Emissions (t of CO₂/t of Glass)");
 
-    const sortedData = [...data.filter(d => d.Case !== 'NG' && d.Case !== 'NG-CC'),
-                        ...data.filter(d => d.Case === 'NG' || d.Case === 'NG-CC')];
+    const sortedData = [...data.filter(d => d.Case !== 'NG' && d.Case !== 'NG_CC'),
+                        ...data.filter(d => d.Case === 'NG' || d.Case === 'NG_CC')];
 
     const points = svg.selectAll("path.point")
       .data(sortedData.filter(d => d[year] !== undefined && !isNaN(d[year]) && d.EI !== undefined), d => d.Case);
@@ -105,8 +105,8 @@ const ParetoPlot = () => {
       .attr("class", "point")
       .attr("transform", d => `translate(${x(d[year])}, ${y(d.EI)})`)
       .attr("d", d => d3.symbol().type(d3.symbolCircle).size(200)())
-      .attr("fill", d => /-CC/.test(d.Case) ? "none" : color(d.Spec_Energy))
-      .attr("stroke", d => /-CC/.test(d.Case) ? color(d.Spec_Energy) : "black")
+      .attr("fill", d => /_CC/.test(d.Case) ? "none" : color(d.Spec_Energy))
+      .attr("stroke", d => /_CC/.test(d.Case) ? color(d.Spec_Energy) : "black")
       .attr("stroke-width", 1.5)
       .on("mouseover", (event, d) => {
         tooltip.style("display", "block")
@@ -122,8 +122,8 @@ const ParetoPlot = () => {
 
     points.transition().duration(1000)
       .attr("transform", d => `translate(${x(d[year])}, ${y(d.EI)})`)
-      .attr("fill", d => /-CC/.test(d.Case) ? "none" : color(d.Spec_Energy))
-      .attr("stroke", d => /-CC/.test(d.Case) ? color(d.Spec_Energy) : "black")
+      .attr("fill", d => /_CC/.test(d.Case) ? "none" : color(d.Spec_Energy))
+      .attr("stroke", d => /_CC/.test(d.Case) ? color(d.Spec_Energy) : "black")
       .selection() // Get back to D3 selection
       .on("mouseover", (event, d) => {
         tooltip.style("display", "block")

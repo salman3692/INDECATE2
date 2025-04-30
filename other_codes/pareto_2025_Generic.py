@@ -2,15 +2,22 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
 
 Industry = 'Glass'
 Product = 'Glass'
+
+font_path = r"C:\Users\msalman\AppData\Local\Microsoft\Windows\Fonts\APTOS-NARROW.TTF"
+aptos_narrow = font_manager.FontProperties(fname=font_path)
+plt.rcParams['font.family'] = aptos_narrow.get_name()
+font_size = 12  # or 14, depending on how big you want
 
 # Check the scenario and set variables accordingly
 scenario = 4  # Change this value to select the scenario
 
 # Define Excel file and sheet name
-excel_file_path = r'c:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_270225.xlsx'
+excel_file_path = r'c:\Users\msalman\Desktop\OSMOSE ETs\Python work\INDECATE2\data\Results_Scenarios_TESTING.xlsx'
 sheet_name = 'SUM'
 
 # Read data from the Excel file
@@ -92,8 +99,9 @@ if not base_case_row.empty:
     ax.axvline(base_case_cost, color='gray', linestyle='--', linewidth=1, label='Base Case (2024)')
 
 # Set labels for the axes
-ax.set_xlabel(f'Cost (€/t of {Product})')
-ax.set_ylabel(f'Emissions (direct + indirect) (t of CO$_{{2}}$/t of {Product})')
+ax.set_xlabel(f'Specific total annual cost (TAC) (€/t of {Product})', fontproperties=aptos_narrow, fontsize=12)
+ax.set_ylabel(f'Emissions (direct + indirect) (t of CO$_{{2}}$/t of {Product})', fontproperties=aptos_narrow, fontsize=12)
+ax.set_title(plot_title, fontproperties=aptos_narrow)
 
 # Set x-axis limits based on cost data
 x_min = min(cost) - 30  # Adjust as needed
@@ -103,7 +111,7 @@ ax.set_xlim(x_min, x_max)
 # Add a color bar representing Spec Energy
 sm = ScalarMappable(norm=norm, cmap=cmap)
 cbar = plt.colorbar(sm, ax=ax)
-cbar.set_label(f'Specific Energy Consumption (GJ/t of {Product})')
+cbar.set_label(f'Specific Energy Consumption (GJ/t of {Product})', fontproperties=aptos_narrow, fontsize=12)
 
 # Set title for the plot
 plt.title(plot_title)
@@ -122,8 +130,10 @@ all_legend_handles = [plt.Line2D([0], [0], marker=m, color='black', markersize=7
 all_legend_handles.append(solid_marker_legend)  # Add solid marker legend (Without CC)
 all_legend_handles.append(hollow_marker_legend)  # Add hollow marker legend (With CC)
 
-# Add single combined legend
-ax.legend(handles=all_legend_handles, fontsize='small', ncol=1)
+ax.legend(handles=all_legend_handles, prop=aptos_narrow, ncol=1)
+ax.tick_params(axis='both', which='major', labelsize=12)
+for label in ax.get_xticklabels() + ax.get_yticklabels():
+    label.set_fontproperties(aptos_narrow)
 
 # Set the size of the plot
 plt.gcf().set_size_inches(6, 6)

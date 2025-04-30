@@ -135,7 +135,7 @@ def main_layout():
         # Parallel Coordinates Plot
         html.Div([
             dcc.Graph(id='parallel-coordinates-plot',
-                    style={'width': '100%', 'height': '400px', 'margin': '0px'}), #originally 525px for website
+                    style={'width': '100%', 'height': '400px', 'margin': '0px'}), #originally 400px for website and 300 px for paper
 
             # Percentage Relative Occurrence
         html.Div(id='percentage-relative-occurrence', style={'margin': '20px', 'font-family': 'Familjen Grotesk, sans-serif'})
@@ -298,7 +298,7 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
     fig = go.Figure(data=
     go.Parcoords(
         line=dict(
-            color=filtered_data['Technology'], colorscale='blackbody'),
+            color=filtered_data['Technology'], colorscale='blackbody_r'),
         dimensions=[
             dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[10, 25, 50, 75, 100, 125, 150, 175, 200], label='Electricity<br>(€/MWh)', values=filtered_data['cEE']),
             dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[10, 25, 50, 75, 100, 150, 200], label='Hydrogen<br>(€/MWh)', values=filtered_data['cH2']),
@@ -307,7 +307,7 @@ def update_plots(selected_commodities, cEE_min, cEE_max, cH2_min, cH2_max, cNG_m
             dict(range=[1, 5], tickvals=[1, 2, 3, 4, 5], ticktext=['NG-fired','NG-Oxyfuel','Hybrid','All-Electric','H2-fired'], label='<b>Technology</b>', values=filtered_data['Technology']),
             # dict(range=[data_df['fuel_demand'].min(), data_df['fuel_demand'].max()], tickvals=[round(val, 2) for val in data_df['fuel_demand'].unique()], label='Fuel Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['fuel_demand']),
             # dict(range=[data_df['elec_demand'].min(), data_df['elec_demand'].max()], tickvals=[round(val, 2) for val in data_df['elec_demand'].unique()], label='Electricity Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['elec_demand']),
-            dict(range=[1,7], tickvals=[1, 2, 3, 4, 5, 6, 7], label='Fuel Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['fuel_demand']),
+            dict(range=[0,7], tickvals=[0, 1, 2, 3, 4, 5, 6, 7], label='Fuel Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['fuel_demand']),
             dict(range=[0,5], tickvals=[0, 1, 2, 3, 4, 5], label='Electricity Demand<br>(GJ/t<sub>glass</sub>)', values=filtered_data['elec_demand']),
             dict(range=[1, 4], tickvals=[1, 2, 3, 4], ticktext=[' ','Yes','No',' '], label='Carbon<br>Capture', values=filtered_data['co2_capt']),
             # dict(range=[data_df['EI'].min(), data_df['EI'].max()], tickvals=[round(val, 2) for val in data_df['EI'].unique()], label='Emissions<br>(t<sub>CO2</sub>/t<sub>glass</sub>)', values=filtered_data['EI'].round(2))
@@ -333,7 +333,7 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8050))
     app.run_server(debug=True, host='0.0.0.0', port=port)
 
-# # Run the app locally
+# # # Run the app locally
 # if __name__ == '__main__':
 #     app.run_server(debug=True)
 
