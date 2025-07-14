@@ -6,7 +6,7 @@ from dash import dcc, html, Input, Output
 
 # -----------------------------
 # Load the lime data
-file_path = os.getenv('file_path', 'resultsPCupdated.csv')
+file_path = os.getenv('file_path', r'Lime\resultsPCupdated.csv')
 data_df = pd.read_csv(file_path)
 
 # Preprocessing: Create 'Technology' and 'Capture' columns
