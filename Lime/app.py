@@ -6,7 +6,7 @@ from dash import dcc, html, Input, Output
 
 # -----------------------------
 # Load the lime data
-file_path = os.getenv('file_path','resultsPCupdated.csv')
+file_path = os.getenv('file_path', 'fichier_modifie.csv')
 data_df = pd.read_csv(file_path)
 
 # Preprocessing: Create 'Technology' and 'Capture' columns
@@ -211,14 +211,16 @@ def update_plots(selected_techs, cEE_min, cEE_max, cH2_min, cH2_max, cNG_min, cN
             line=dict(color=[technology_reverse_mapping[c] for c in filtered_data['Technology']], colorscale='turbo'),
             dimensions=[
                 dict(range=[data_df['cEE'].min(), data_df['cEE'].max()], tickvals=[10, 25, 50, 75, 100, 125, 150, 175],label='Electricity<br>(€/MWh)', values=filtered_data['cEE']),
-                dict(range=[10,100], tickvals=[10, 25, 50, 75, 100],label='Hydrogen<br>(€/MWh)', values=filtered_data['cH2']),
+                dict(range=[data_df['cH2'].min(), data_df['cH2'].max()], tickvals=[10, 25, 50, 75, 100],label='Hydrogen<br>(€/MWh)', values=filtered_data['cH2']),
                 dict(range=[data_df['cNG'].min(), data_df['cNG'].max()], tickvals=[10, 35, 55, 75, 100], label='NG<br>(€/MWh)', values=filtered_data['cNG']),
                 dict(range=[data_df['cBioCH4'].min(), data_df['cBioCH4'].max()], tickvals=[30, 50, 70, 90, 110], label='Bio-CH₄<br>(€/MWh)', values=filtered_data['cBioCH4']),
                 dict(range=[data_df['cBiomass'].min(), data_df['cBiomass'].max()], tickvals=[20, 35, 50, 65, 80], label='Biomass<br>(€/MWh)', values=filtered_data['cBiomass']),
-                dict(range=[data_df['cCO2'].min(), data_df['cCO2'].max()], tickvals=[75, 100, 150, 200, 250],label='CO₂<br>(€/kgCO₂)', values=filtered_data['cCO2']),
-                dict(range=[data_df['cTS'].min(), data_df['cTS'].max()], tickvals=[25, 50, 75, 100], label='CO₂T&S<br>(€/kgCO₂)', values=filtered_data['cTS']),
+                dict(range=[data_df['cCO2'].min(), data_df['cCO2'].max()], tickvals=[75, 100, 150, 200, 250],label='CO₂<br>(€/tCO₂)', values=filtered_data['cCO2']),
+                dict(range=[data_df['cTS'].min(), data_df['cTS'].max()], tickvals=[25, 50, 75, 100], label='CO₂T&S<br>(€/tCO₂)', values=filtered_data['cTS']),
                 dict(range=[1,3], tickvals=[1,2,3], ticktext=['No Capture','Oxy Capture','MEA Capture'], label='Carbon Capture', values=[capture_mapping[c] for c in filtered_data['Capture']]),
-                dict(range=[1,5], tickvals=list(technology_mapping.keys()), ticktext=list(technology_mapping.values()), label='Technology', values=[technology_reverse_mapping[c] for c in filtered_data['Technology']])
+                dict(range=[1,5], tickvals=list(technology_mapping.keys()), ticktext=list(technology_mapping.values()), label='Technology', values=[technology_reverse_mapping[c] for c in filtered_data['Technology']]),
+                dict(range=[3,10], tickvals=[3, 4, 5, 6, 7, 8, 9, 10], label='Total Energy<br>Demand (GJ/t<sub>lime</sub>)', values=filtered_data['energy']),
+                dict(range=[-0.4,1], tickvals=[-0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1], label='CO₂ emissions <br>(tCO₂/t<sub>lime</sub>)', values=filtered_data['co2'])
             ],
             unselected=dict(line=dict(color='green', opacity=0.0))
         )
@@ -229,7 +231,7 @@ def update_plots(selected_techs, cEE_min, cEE_max, cH2_min, cH2_max, cNG_min, cN
         font=dict(family='Familjen Grotesk, sans-serif', size=15),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        margin=dict(l=50, r=40, t=50, b=50)
+        margin=dict(l=40, r=40, t=50, b=50)
     )
 
     return fig, percentage_occurrence
