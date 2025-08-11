@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import joblib
-import os
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -33,10 +32,6 @@ config_list = [
     "Hybrid", "Plasma"
 ]
 
-# Load emissions data
-emissions_df = pd.read_csv(EMISSIONS_FILE)
-emissions_dict = dict(zip(emissions_df['Case'], emissions_df['Emissions']))
-
 # Load surrogate models
 models = {}
 for config_name in config_list:
@@ -54,30 +49,54 @@ for config_name in config_list:
 async def predict(request: Request):
     input_data = await request.json()
 
-    # Create input array in correct order
-    input_vector = np.array([
-        input_data["cEE"],
-        input_data["cH2"],
-        input_data["cNG"],
-        input_data["cbioCH4"],
-        input_data["cbiomass"],
-        input_data["cCoal"],
-        input_data["cMSW"],
-        input_data["cCO2"],
-        input_data["cCO2TnS"]
-    ]).reshape(1, -1)
+    # Extract emission scenario (default to RE1 if not provided)
+    scenario_key = input_data.get("emission_scenario", "RE1")
+    scenario_map = {
+        "fossil": "Emissions_energmix_fossil",
+        "RE1": "Emissions_energymix_RE1",
+        "RE2": "Emissions_energymix_RE2"
+    }
 
+    emissions_column = scenario_map.get(scenario_key)
+
+    if emissions_column is None:
+        return {"error": f"Invalid emission_scenario: {scenario_key}"}
+
+    # Load emissions and energy data from CSV
+    emissions_df = pd.read_csv(EMISSIONS_FILE)
+    emissions_dict = dict(zip(emissions_df['Case'], emissions_df[emissions_column]))
+    energy_dict = dict(zip(emissions_df['Case'], emissions_df['Spec_Energy']))
+
+    # Create input array
+    try:
+        input_vector = np.array([
+            input_data["cEE"],
+            input_data["cH2"],
+            input_data["cNG"],
+            input_data["cbioCH4"],
+            input_data["cbiomass"],
+            input_data["cCoal"],
+            input_data["cMSW"],
+            input_data["cCO2"],
+            input_data["cCO2TnS"]
+        ]).reshape(1, -1)
+    except Exception as e:
+        return {"error": f"Invalid input vector: {str(e)}"}
+
+    # Prediction results
     results = {}
     for config_name in config_list:
         try:
             model = models.get(config_name)
             if model is None:
                 raise ValueError("Model not loaded.")
-            cost = float(model(input_vector)[0])  # RBFInterpolator is callable
-            emissions = float(emissions_dict.get(config_name, 0.0))  # default to 0.0 if missing
+            cost = float(model(input_vector)[0])
+            emissions = float(emissions_dict.get(config_name, 0.0))
+            spec_energy = float(energy_dict.get(config_name, 0.0))
             results[config_name] = {
                 "cost": round(cost, 4),
-                "emissions": round(emissions, 4)
+                "emissions": round(emissions, 4),
+                "spec_energy": round(spec_energy, 4)
             }
         except Exception as e:
             results[config_name] = {"error": str(e)}
