@@ -7,7 +7,7 @@ const FONT = 'Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 export default function Controls({
   inputs, setInputs,
   emissionScenario, setEmissionScenario,
-  onGenerate, loading, error,
+  onGenerate, loading, error, //sffsd
 }) {
   const fields = useMemo(() => ({
     cEE:       { label: 'Electricity', unit: '((€/MWh))', min: 0.01, max: 0.175, step: 0.001 },
