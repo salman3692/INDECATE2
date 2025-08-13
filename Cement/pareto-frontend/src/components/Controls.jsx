@@ -1,4 +1,8 @@
-import { useMemo } from 'react';
+// src/components/Controls.jsx
+import React, { useMemo } from 'react';
+
+// ✅ Same font family as ParetoChart
+const FONT = 'Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 export default function Controls({
   inputs, setInputs,
@@ -6,89 +10,175 @@ export default function Controls({
   onGenerate, loading, error,
 }) {
   const fields = useMemo(() => ({
-    cEE: { label: 'Electricity', unit: '€/kWh', min: 0.01, max: 0.175, step: 0.001 },
-    cH2: { label: 'Hydrogen', unit: '€/kWh', min: 0.01, max: 0.1, step: 0.001 },
-    cNG: { label: 'Nat. Gas', unit: '€/kWh', min: 0.01, max: 0.1, step: 0.001 },
-    cbioCH4: { label: 'Bio-CH₄', unit: '€/kWh', min: 0.03, max: 0.09, step: 0.001 },
-    cbiomass: { label: 'Biomass', unit: '€/kWh', min: 0.01, max: 0.09, step: 0.001 },
-    cCoal: { label: 'Coal', unit: '€/kWh', min: 0.01, max: 0.09, step: 0.001 },
-    cMSW: { label: 'MSW', unit: '€/kWh', min: 0.01, max: 0.09, step: 0.001 },
-    cCO2: { label: 'CO₂ price', unit: '€/kg', min: 0.075, max: 0.25, step: 0.001 },
-    cCO2TnS: { label: 'CO₂ T&S', unit: '€/kg', min: 0.025, max: 0.1, step: 0.001 },
+    cEE:       { label: 'Electricity', unit: '((€/MWh))', min: 0.01, max: 0.175, step: 0.001 },
+    cH2:       { label: 'Hydrogen',   unit: '(€/MWh)', min: 0.01, max: 0.10,  step: 0.001 },
+    cNG:       { label: 'Natural Gas',   unit: '(€/MWh)', min: 0.01, max: 0.10,  step: 0.001 },
+    cbioCH4:   { label: 'Bio Methane',    unit: '(€/MWh)', min: 0.03, max: 0.09,  step: 0.001 },
+    cbiomass:  { label: 'Biomass',    unit: '(€/MWh)', min: 0.01, max: 0.09,  step: 0.001 },
+    cCoal:     { label: 'Coal',       unit: '(€/MWh)', min: 0.01, max: 0.09,  step: 0.001 },
+    cMSW:      { label: 'Municipal Solid Waste',        unit: '(€/MWh)', min: 0.01, max: 0.09,  step: 0.001 },
+    cCO2:      { label: 'CO₂ Emissions Cost',  unit: '(€/t)',  min: 0.075,max: 0.25,  step: 0.001 },
+    cCO2TnS:   { label: 'CO₂ Transport & Storage Cost',    unit: '(€/t)',  min: 0.025,max: 0.10,  step: 0.001 },
   }), []);
 
-  const handleChange = (k, v) => setInputs(prev => ({ ...prev, [k]: v }));
+  const handle = (k, v) => setInputs(p => ({ ...p, [k]: v }));
 
   return (
-    <section className="rounded-2xl bg-white border border-gray-200 shadow-sm p-4">
-      {/* Scenario row (centered) */}
-      <div className="flex justify-center mb-3">
-        <div className="inline-flex rounded-xl border overflow-hidden">
-          {['fossil', 'RE1', 'RE2'].map(s => (
+    <div
+      style={{
+        width: 330,
+        height: 640,
+        background: '#fff',
+        borderRadius: 12,
+        border: '1px solid #E5E7EB',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        padding: 14,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        fontFamily: FONT, // ✅ Apply to whole sidebar
+      }}
+    >
+      {/* Scenario buttons */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {['fossil','RE1','RE2'].map(s => {
+          const active = emissionScenario === s;
+          return (
             <button
               key={s}
-              type="button"
               onClick={() => setEmissionScenario(s)}
-              className={`px-4 py-2 text-sm transition ${
-                emissionScenario === s
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white hover:bg-neutral-50 text-neutral-700'
-              }`}
+              style={{
+                padding: '6px 10px',
+                borderRadius: 8,
+                border: active ? '1px solid #1D4ED8' : '1px solid #E5E7EB',
+                background: active ? '#1D4ED8' : '#F9FAFB',
+                color: active ? '#fff' : '#374151',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: FONT, // ✅
+              }}
             >
               {s === 'fossil' ? 'Scenario fossil' : `Scenario ${s}`}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      {/* Sliders grid (wide, like your boxes) */}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      {/* Scrollable controls */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}
+      >
         {Object.entries(fields).map(([key, meta]) => {
           const val = inputs[key];
           return (
-            <div key={key} className="rounded-lg border p-3">
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
-                {meta.label} <span className="text-[10px] text-neutral-500">{meta.unit}</span>
+            <div
+              key={key}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 78px',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 8px',
+                border: '1px solid #F0F1F3',
+                borderRadius: 10,
+                maxWidth: '90%',
+                background: '#FCFCFD',
+                fontFamily: FONT, // ✅
+              }}
+            >
+              <label
+                style={{
+                  fontSize: 12,
+                  color: '#374151',
+                  fontWeight: 600,
+                  letterSpacing: 0.2,
+                  fontFamily: FONT, // ✅
+                }}
+              >
+                {meta.label} <span style={{ color: '#9CA3AF', fontWeight: 500 }}>{meta.unit}</span>
               </label>
+
               <input
                 type="number"
-                value={val}
-                step={meta.step}
-                min={meta.min}
-                max={meta.max}
-                onChange={e => handleChange(key, e.target.value)}
-                className="w-full rounded-md border px-2 py-1 text-[11px] mb-2 focus:outline-none focus:ring-1 focus:ring-indigo-500/40 focus:border-indigo-500"
+                value={parseFloat((val * 1000).toFixed(3))}
+                step={meta.step * 1000}
+                min={meta.min * 1000}
+                max={meta.max * 1000}
+                onChange={e => handle(key, Number(e.target.value) / 1000)}
+                style={{
+                  width: '100%',
+                  padding: '6px 8px',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  textAlign: 'right',
+                  fontFamily: FONT, // ✅
+                }}
               />
+
               <input
                 type="range"
                 value={val}
                 min={meta.min}
                 max={meta.max}
                 step={meta.step}
-                onChange={e => handleChange(key, e.target.value)}
-                className="w-full h-1 accent-indigo-600"
+                onChange={e => handle(key, Number(e.target.value))}
+                style={{
+                  gridColumn: '1 / -1',
+                  width: '100%',
+                  height: 4,
+                  accentColor: '#2563EB',
+                }}
               />
             </div>
           );
         })}
       </div>
 
-      {/* Generate button centered */}
-      <div className="flex justify-center mt-4">
-        <button
-          onClick={onGenerate}
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg border border-indigo-600 bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
-        >
-          {loading ? 'Generating…' : 'Generate'}
-        </button>
-      </div>
-
+      {/* Error */}
       {error && (
-        <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 border border-red-200 text-center">
+        <div
+          style={{
+            fontSize: 12,
+            color: '#B91C1C',
+            background: '#FEF2F2',
+            border: '1px solid #FECACA',
+            borderRadius: 8,
+            padding: '8px 10px',
+            fontFamily: FONT, // ✅
+          }}
+        >
           {error}
-        </p>
+        </div>
       )}
-    </section>
+
+      {/* Generate button */}
+      <button
+        onClick={onGenerate}
+        disabled={loading}
+        style={{
+          height: 38,
+          borderRadius: 10,
+          border: '1px solid #1D4ED8',
+          background: '#1D4ED8',
+          color: '#fff',
+          fontWeight: 700,
+          fontSize: 13,
+          cursor: 'pointer',
+          opacity: loading ? 0.7 : 1,
+          fontFamily: FONT, // ✅
+        }}
+      >
+        {loading ? 'Generating…' : 'Generate'}
+      </button>
+    </div>
   );
 }

@@ -35,11 +35,11 @@ export default function AppShell({ sidebar, headerExtras, children }) {
 
       {/* Body grid */}
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-4">
-      <div
-        className={`grid gap-4 md:gap-6 transition-[grid-template-columns] duration-200 grid-cols-1 ${
-            open ? 'md:grid-cols-[1fr]' : 'md:grid-cols-[0px,1fr]'
-        }`}
-      >
+        <div
+          className={`grid gap-4 md:gap-6 transition-[grid-template-columns] duration-200 grid-cols-1 ${
+            open ? 'md:grid-cols-[300px,1fr]' : 'md:grid-cols-[0px,1fr]'
+          }`}
+        >
           {/* Sidebar */}
           <aside
             className={`overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm ${

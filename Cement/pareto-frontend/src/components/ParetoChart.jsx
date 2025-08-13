@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 
 const fillPatternMap = { noCC: null, MEA: 'hatch', Oxy: 'cross', CaL: 'dot' };
+const FONT = 'Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 function getEnergyColor(se, minE, maxE) {
-  const colors = ['#2c005e', '#0000ff', '#00ffff', '#00ff00', '#ffff00', '#ff8000', '#ff0000'];
+  const colors = ['#0d0887','#2a0593','#41049d','#5d01a6','#6a00a8','#8000a9','#8f0da4','#9c179e','#b12a90','#c23c81','#cc4778','#d35171','#e16462','#ec7853','#f2844b','#f68f44','#fca636'];
   const t = (se - minE) / (maxE - minE || 1);
   const idx = Math.min(colors.length - 1, Math.max(0, Math.floor(t * (colors.length - 1))));
   return colors[idx];
@@ -22,7 +23,7 @@ function createPatternedSymbol(base, patternType, color) {
     ctx.arc(size/2, size/2, (size - pad*2)/2, 0, Math.PI*2);
   } else if (base === 'rect') {
     ctx.rect(pad, pad, size - pad*2, size - pad*2);
-  } else if (base === 'triangle') { // upward
+  } else if (base === 'triangle') {
     ctx.moveTo(size/2, pad); ctx.lineTo(size - pad, size - pad); ctx.lineTo(pad, size - pad); ctx.closePath();
   } else if (base === 'diamond') {
     ctx.moveTo(size/2, pad); ctx.lineTo(size - pad, size/2); ctx.lineTo(size/2, size - pad); ctx.lineTo(pad, size/2); ctx.closePath();
@@ -121,12 +122,10 @@ export default function ParetoChart({ results, emissionScenario }) {
 
     const byBase = points.reduce((acc, p) => ((acc[p.base] ||= []).push(p), acc), {});
 
-    // --- REAL series (base tech) ---
     const series = Object.entries(byBase).map(([base, arr]) => ({
       name: base,
       type: 'scatter',
-      // legend icon shape (neutral grey) so legend shows correct shape
-      symbol: createPatternedSymbol(getBaseShape(base), null, '#9ca3af'),
+      symbol: createPatternedSymbol(getBaseShape(base), null, '#1f1f20ff'),
       symbolSize: 20,
       data: arr.map(p => {
         const color = getEnergyColor(p.se, minE, maxE);
@@ -135,61 +134,34 @@ export default function ParetoChart({ results, emissionScenario }) {
         return {
           value: [p.cost, p.emis, p.se],
           name: p.config,
-          // actual point symbol with color/pattern
           symbol: createPatternedSymbol(shape, patternType, color),
         };
       }),
       emphasis: { focus: 'series' },
     }));
 
-    // --- FAKE series for CC legend items (always in legend, not on plot) ---
     const ccLegendSeries = [
-      {
-        name: 'CC_MEA',
-        type: 'scatter',
-        data: [],
-        symbol: createPatternedSymbol('rect', 'hatch', '#111111'), // black hatched
-        symbolSize: 16,
-        silent: true,
-        tooltip: { show: false },
-      },
-      {
-        name: 'OxyCC',
-        type: 'scatter',
-        data: [],
-        symbol: createPatternedSymbol('rect', 'cross', '#111111'), // black cross-hatch
-        symbolSize: 16,
-        silent: true,
-        tooltip: { show: false },
-      },
-      {
-        name: 'CC_CaL',
-        type: 'scatter',
-        data: [],
-        symbol: createPatternedSymbol('rect', 'dot', '#111111'), // black dots
-        symbolSize: 16,
-        silent: true,
-        tooltip: { show: false },
-      },
+      { name: 'CC_MEA', type: 'scatter', data: [], symbol: createPatternedSymbol('rect', 'hatch', '#111111'), symbolSize: 16, silent: true, tooltip: { show: false } },
+      { name: 'OxyCC', type: 'scatter', data: [], symbol: createPatternedSymbol('rect', 'cross', '#111111'), symbolSize: 16, silent: true, tooltip: { show: false } },
+      { name: 'CC_CaL', type: 'scatter', data: [], symbol: createPatternedSymbol('rect', 'dot', '#111111'), symbolSize: 16, silent: true, tooltip: { show: false } },
     ];
 
     const finalSeries = [...series, ...ccLegendSeries];
 
-    // grid & visualMap share top/bottom => same vertical height (energy bar aligned)
     const gridTop = 20;
-    const gridBottom = 100; // a bit more room for legend
 
     chartRef.current.setOption({
       backgroundColor: '#fff',
+      textStyle: { fontFamily: FONT },
       grid: {
-        left: 80, right: 130, top: gridTop, bottom: gridBottom, containLabel: true,
-        borderColor: '#d1d5db', borderWidth: 1
+        left: 80, right: 130, top: gridTop, bottom: 140, containLabel: true, show: true,
+        borderColor: '#292a2bff', borderWidth: 1
       },
       tooltip: {
         trigger: 'item',
         borderColor: '#e5e7eb',
         backgroundColor: '#ffffff',
-        textStyle: { color: '#111827' },
+        textStyle: { color: '#111827', fontFamily: FONT },
         formatter: ({ value, data }) => {
           const [cost, emis, se] = value;
           const config = data?.name || '';
@@ -200,45 +172,58 @@ export default function ParetoChart({ results, emissionScenario }) {
         type: 'plain',
         orient: 'vertical',
         right: 20,
-        // left: 200,
-        top: 50,
+        top: 90,
         itemWidth: 20,
         itemHeight: 20,
-        symbolKeepAspect: true,                    // <- avoids stretched icons
+        symbolKeepAspect: true,
         itemGap: 16,
-        textStyle: { fontSize: 12, color: '#374151' },
-        // include base tech names + CC names so they ALWAYS appear
+        textStyle: { fontSize: 12, color: '#374151', fontFamily: FONT },
         data: [...Object.keys(byBase), 'CC_MEA', 'OxyCC', 'CC_CaL'],
       },
       xAxis: {
-        name: 'Cost (€/t of Cement)', nameLocation: 'middle', nameGap: 35,
+        name: 'Total Cost (€/t of Clinker)', nameLocation: 'middle', nameGap: 35,
         min: minCost - padding, max: maxCost + padding,
-        axisLine: { lineStyle: { color: '#9ca3af' } },
-        splitLine: { show: true, lineStyle: { color: '#f3f4f6' } },
-        axisLabel: { color: '#374151' }, nameTextStyle: { color: '#374151' },
+        axisLine: { lineStyle: { color: '#3f3f3fff', width: 0.5 } },
+        axisLabel: { color: '#191919ff', fontSize: 14, fontFamily: FONT, formatter: value => Math.round(value) },
+        nameTextStyle: { color: '#191919ff', fontSize: 16, fontFamily: FONT },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: '#e7e7e7ff' } },
       },
       yAxis: {
-        name: 'Emissions (t CO₂/t of Cement)', nameLocation: 'middle', nameGap: 50,
+        name: 'Emissions (t CO₂/t of Clinker)', nameLocation: 'middle', nameGap: 50,
         min: -0.3, max: 1,
-        axisLine: { lineStyle: { color: '#9ca3af' } },
-        splitLine: { show: true, lineStyle: { color: '#f3f4f6' } },
-        axisLabel: { color: '#374151' }, nameTextStyle: { color: '#374151' },
+        axisLine: { lineStyle: { color: '#3f3f3fff' }, show: false },
+        splitLine: { show: true, lineStyle: { color: '#e7e7e7ff' } },
+        axisLabel: { color: '#191919ff', fontSize: 14, fontFamily: FONT },
+        nameTextStyle: { color: '#191919ff', fontSize: 14, fontFamily: FONT },
+        axisTick: { show: false },
       },
       visualMap: {
         min: minE, 
         max: maxE, 
         dimension: 2, 
         orient: 'horizontal',
-        bottom: 10, 
-        right: 90,          // ← move 50px from the right edge
+        bottom: 35, 
+        right: 90, 
         left: '180', 
-        itemWidth: 30,     // <-- length of the bar
-        itemHeight: 500,     // <-- thickness of the bar
+        itemWidth: 30,
+        itemHeight: 500,
         calculable: true,
-        inRange: { color: ['#2c005e','#0000ff','#00ffff','#00ff00','#ffff00','#ff8000','#ff0000'] },
+        inRange: { color: ['#0d0887','#2a0593','#41049d','#5d01a6','#6a00a8','#8000a9','#8f0da4','#9c179e','#b12a90','#c23c81','#cc4778','#d35171','#e16462','#ec7853','#f2844b','#f68f44','#fca636']},
         text: ['High', 'Low'],
-        textStyle: { fontSize: 12, color: '#374151' },
+        textStyle: { fontSize: 12, color: '#374151', fontFamily: FONT },
       },
+      graphic: [{
+        type: 'text',
+        left: 'center',
+        bottom: 20,
+        style: {
+          text: 'Specific Energy Consumption (GJ/t of Clinker)',
+          fontSize: 14,
+          fontFamily: FONT,
+          fill: '#374151'
+        }
+      }],
       series: finalSeries,
       animationDuration: 300,
     });
@@ -249,8 +234,8 @@ export default function ParetoChart({ results, emissionScenario }) {
       className="rounded-2xl bg-white shadow-sm"
       style={{
         width: "900px",
-        height: "600px",
-        margin: "0 auto",
+        height: "680px",
+        margin: "auto",
         border: "1px solid #d1d5db",
       }}
     >

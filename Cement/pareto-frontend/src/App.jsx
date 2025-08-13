@@ -1,6 +1,5 @@
 // src/App.jsx
-import React, { useState } from 'react';
-import AppShell from './components/AppShell';
+import React, { useState, useEffect } from 'react';
 import Controls from './components/Controls';
 import ParetoChart from './components/ParetoChart';
 
@@ -49,7 +48,12 @@ export default function App() {
 
     setLoading(true);
     try {
-      const payload = { ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, Number(v)])), emission_scenario: emissionScenario };
+      const payload = {
+        ...Object.fromEntries(
+          Object.entries(inputs).map(([k, v]) => [k, Number(v)])
+        ),
+        emission_scenario: emissionScenario
+      };
       const res = await fetch('http://127.0.0.1:8000/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -65,30 +69,60 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    onGenerate();
+  }, []);
+
   return (
-    <AppShell
-      sidebar={
-        <Controls
-          inputs={inputs}
-          setInputs={setInputs}
-          emissionScenario={emissionScenario}
-          setEmissionScenario={setEmissionScenario}
-          onGenerate={onGenerate}
-          loading={loading}
-          error={error}
-        />
-      }
-      headerExtras={null}
-    >
-      <section className="rounded-2xl">
-        <div className="mb-2 flex items-end justify-between">
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight">Cement Decarbonization — Pareto Visualizer</h1>
-            <p className="text-sm text-neutral-500">Explore cost–emissions trade-offs across configurations.</p>
-          </div>
+    <div style={{
+      height: '100vh',                  // full screen height
+      display: 'flex',
+      justifyContent: 'center',         // center horizontally
+      alignItems: 'center',             // center vertically
+      background: '#f5f5f5',            // light page background
+    }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'stretch',          // equal height children
+        gap: '20px',
+        height: '700px',                 // fixed total height
+      }}>
+        {/* Controls column */}
+        <div style={{
+          flex: '0 0 300px',
+          display: 'flex',
+          flexDirection: 'column',
+          background: '#fff',
+          padding: '15px',
+          borderRadius: '8px',
+          border: '1px solid #ddd',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+        }}>
+          <Controls
+            inputs={inputs}
+            setInputs={setInputs}
+            emissionScenario={emissionScenario}
+            setEmissionScenario={setEmissionScenario}
+            onGenerate={onGenerate}
+            loading={loading}
+            error={error}
+          />
         </div>
-        <ParetoChart results={results} emissionScenario={emissionScenario} />
-      </section>
-    </AppShell>
+
+        {/* Chart column */}
+        <div style={{
+          flex: 1,
+          background: '#fff',
+          borderRadius: '8px',
+          border: '1px solid #ddd',
+          padding: '10px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+        }}>
+          {loading && !results && <p>Loading default scenario…</p>}
+          <ParetoChart results={results} emissionScenario={emissionScenario} />
+        </div>
+      </div>
+    </div>
   );
 }
