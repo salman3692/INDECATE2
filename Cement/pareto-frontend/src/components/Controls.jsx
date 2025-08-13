@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 
 // ✅ Same font family as ParetoChart
 const FONT = 'Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-
+// sdfsdf
 export default function Controls({
   inputs, setInputs,
   emissionScenario, setEmissionScenario,
