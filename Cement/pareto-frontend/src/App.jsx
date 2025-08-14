@@ -41,7 +41,7 @@ export default function App() {
     return '';
   };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ""; // same origin by default
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ""; // same origin by default
 
   const onGenerate = async () => {
     setError('');
