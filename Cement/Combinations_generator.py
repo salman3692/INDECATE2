@@ -14,7 +14,7 @@ cCO2TnS_values = [0.025, 0.05, 0.075, 0.100]
 
 # Generate combinations using itertools.product
 combinations = list(itertools.product(cEE_values, cH2_values, cNG_values, cbioCH4_values, cbiomass_values, cCoal, cMSW, cCO2_values, cCO2TnS_values))
-
+# ok
 # Write the combinations to a CSV file
 with open('combinations_V220625.csv', 'w', newline='') as csvfile:
     fieldnames = ['cEE', 'cH2', 'cNG','cBioCH4','cBiomass', 'cCoal', 'cMSW', 'cCO2','cTnS']
