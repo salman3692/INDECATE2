@@ -4,6 +4,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -102,3 +103,8 @@ async def predict(request: Request):
             results[config_name] = {"error": str(e)}
 
     return {"results": results}
+
+# Path to built frontend
+FRONTEND_DIST = BASE_DIR / "pareto-frontend" / "dist"
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="static")
