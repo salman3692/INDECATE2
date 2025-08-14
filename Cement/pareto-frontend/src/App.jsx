@@ -41,6 +41,8 @@ export default function App() {
     return '';
   };
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""; // same origin by default
+
   const onGenerate = async () => {
     setError('');
     const maybe = validate();
@@ -54,7 +56,7 @@ export default function App() {
         ),
         emission_scenario: emissionScenario
       };
-      const res = await fetch('http://127.0.0.1:8000/predict', {
+      const res = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
