@@ -42,9 +42,9 @@ for config_name in config_list:
             model = joblib.load(file_path)
             models[config_name] = model
         except Exception as e:
-            print(f"❌ Failed to load {config_name}: {e}")
+            print(f"Failed to load {config_name}: {e}")
     else:
-        print(f"⚠️  Skipped model: {config_name} (file not found)")
+        print(f"Skipped model: {config_name} (file not found)")
 
 @app.post("/predict")
 async def predict(request: Request):
